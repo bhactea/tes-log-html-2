@@ -2,8 +2,8 @@
     package="com.bhakti.redirectcamera">
 
     <application
-        android:label="RedirectCameraHook"
-        android:icon="@mipmap/ic_launcher">
+    android:label="RedirectCameraHook"
+    android:icon="@android:drawable/ic_menu_camera">
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
