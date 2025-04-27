@@ -1,8 +1,8 @@
 buildscript {
     repositories {
         google()
-        mavenCentral()                              # untuk plugin Android 
-        maven { url "https://repo.spring.io/libs-milestone" }  # Xposed API stub 
+        mavenCentral()
+        maven { url "https://repo.spring.io/libs-milestone" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.4'
@@ -12,6 +12,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://repo.spring.io/libs-milestone" }  # agar compileOnly 'de.robv.android.xposed:api:82' 
+        maven { url "https://repo.spring.io/libs-milestone" }
     }
 }
