@@ -27,7 +27,7 @@ jobs:
         run: ./gradlew app:assembleDebug            # build modul 
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: redirect-camera-hook-debug
           path: app/build/outputs/apk/debug/*.apk   # artifact APK 
