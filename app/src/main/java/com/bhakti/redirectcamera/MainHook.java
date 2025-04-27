@@ -18,47 +18,39 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 public class MainHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        // Hanya untuk aplikasi Harpa
+        // Hanya jalankan untuk Harpa
         if (!"com.harpamobilehr".equals(lpparam.packageName)) return;
 
-        // Hook semua overload startActivity dan startActivityForResult
-        XC_MethodHook hook = new XC_MethodHook() {
+        ClassLoader cl = lpparam.classLoader;
+        Class<?> activityClass = XposedHelpers.findClass("android.app.Activity", cl);
+
+        // Hook semua overload startActivityForResult
+        XC_MethodHook hookForResult = new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 Intent orig = (Intent) param.args[0];
+                int requestCode = (int) param.args[1];  // requestCode harus dipertahankan :contentReference[oaicite:6]{index=6}
                 if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
-                    XposedBridge.log("RedirectCameraHook: CAMERA intent intercepted");
-                    Intent ni = new Intent();
+                    XposedBridge.log("RedirectCameraHook: Intercept startActivityForResult");
+                    Intent ni = new Intent(orig);
                     ni.setComponent(new ComponentName(
                         "net.sourceforge.opencamera",
                         "net.sourceforge.opencamera.MainActivity"
                     ));
                     param.args[0] = ni;
-                    XposedBridge.log("RedirectCameraHook: Redirected to Open Camera");
+                    // param.args[1] = requestCode; // tidak diubah
+                    XposedBridge.log("RedirectCameraHook: Camera intent redirected with requestCode " + requestCode);
                 }
             }
         };
-
-        ClassLoader cl = lpparam.classLoader;
-        Class<?> activityClass = XposedHelpers.findClass("android.app.Activity", cl);
-
-        // startActivity(Intent)
-        XposedHelpers.findAndHookMethod(activityClass,
-            "startActivity", Intent.class, hook);
-
-        // startActivity(Intent, Bundle)
-        XposedHelpers.findAndHookMethod(activityClass,
-            "startActivity", Intent.class, Bundle.class, hook);
-
         // startActivityForResult(Intent, int)
         XposedHelpers.findAndHookMethod(activityClass,
-            "startActivityForResult", Intent.class, int.class, hook);
-
+            "startActivityForResult", Intent.class, int.class, hookForResult);
         // startActivityForResult(Intent, int, Bundle)
         XposedHelpers.findAndHookMethod(activityClass,
-            "startActivityForResult", Intent.class, int.class, Bundle.class, hook);
+            "startActivityForResult", Intent.class, int.class, Bundle.class, hookForResult);
 
-        // Juga hook Instrumentation.execStartActivity
+        // Juga hook execStartActivity untuk catching semua panggilan internal
         XposedHelpers.findAndHookMethod("android.app.Instrumentation",
             cl,
             "execStartActivity",
@@ -67,15 +59,17 @@ public class MainHook implements IXposedHookLoadPackage {
             new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    Intent orig = (Intent) param.args[4];  // Intent ada di index 4
+                    Intent orig = (Intent) param.args[4];
+                    int requestCode = (int) param.args[5];
                     if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                         XposedBridge.log("RedirectCameraHook: execStartActivity intercepted");
-                        Intent ni = new Intent();
+                        Intent ni = new Intent(orig);
                         ni.setComponent(new ComponentName(
                             "net.sourceforge.opencamera",
                             "net.sourceforge.opencamera.MainActivity"
                         ));
                         param.args[4] = ni;
+                        // param.args[5] = requestCode; // tetap sama
                         XposedBridge.log("RedirectCameraHook: execStartActivity redirected");
                     }
                 }
