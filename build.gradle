@@ -2,7 +2,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://repo.spring.io/libs-milestone" }
+        maven { url "https://repo.spring.io/milestone" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.2'
@@ -12,6 +12,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://repo.spring.io/libs-milestone" }
+        maven { url "https://repo.spring.io/milestone" }
     }
 }
