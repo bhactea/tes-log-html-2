@@ -5,7 +5,7 @@ buildscript {
         maven { url "https://repo.spring.io/libs-milestone" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
 allprojects {
