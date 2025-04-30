@@ -2,38 +2,37 @@ package com.bhakti.redirectcamera;
 
 import android.app.Activity;
 import android.app.Instrumentation;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.ViewPropertyAnimator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableArray;
+import com.reactnativecommunity.netinfo.NetInfoModule;
+
+import java.io.IOException;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import okhttp3.MediaType;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class MainHook implements IXposedHookLoadPackage {
-    private static final Map<Integer, Bitmap> bmpCache = new HashMap<>();
-
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if (!"com.harpamobilehr".equals(lpparam.packageName)) return;
         ClassLoader cl = lpparam.classLoader;
 
-        // ═══ 1. Bypass PIN: checkPin() di PinCodeModule → always true ═══
+        // 1) Bypass checkPin di PinCodeModule
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.modules.PinCodeModule",
@@ -48,78 +47,85 @@ public class MainHook implements IXposedHookLoadPackage {
                     }
                 }
             );
-        } catch (Throwable t) {
-            XposedBridge.log("PIN bypass hook failed: " + t.getMessage());
+        } catch(Throwable t) {
+            XposedBridge.log("Failed hook checkPin: " + t.getMessage());
         }
 
-        // ═══ 2. Bypass SplashScreen via MainActivity.onCreate ═══
+        // 2) Fake network response untuk /validatePin via OkHttp
         try {
-            Class<?> mainAct = XposedHelpers.findClass("com.harpamobilehr.MainActivity", cl);
-            XposedHelpers.findAndHookMethod(mainAct, "onCreate", Bundle.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) {
-                    Activity act = (Activity) param.thisObject;
-                    try {
-                        // langsung hide splash
-                        XposedHelpers.callStaticMethod(
-                            XposedHelpers.findClass(
-                                "org.devio.rn.splashscreen.SplashScreen", cl),
-                            "hide", act);
-                        XposedBridge.log("SplashScreen auto-hide injected");
-                    } catch (Throwable e) {
-                        XposedBridge.log("Failed hiding splash: " + e.getMessage());
+            XposedHelpers.findAndHookMethod(
+                "okhttp3.RealCall", cl,
+                "execute",
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        Request req = (Request) XposedHelpers.getObjectField(param.thisObject, "originalRequest");
+                        String url = req.url().toString();
+                        if (url.contains("/validatePin")) {
+                            XposedBridge.log("Bypass network validatePin for URL: " + url);
+                            Response fake = new Response.Builder()
+                                .request(req)
+                                .protocol(Protocol.HTTP_1_1)
+                                .code(200).message("OK")
+                                .body(ResponseBody.create(
+                                    MediaType.parse("application/json"),
+                                    "{\"status\":\"success\",\"data\":{}}"
+                                ))
+                                .build();
+                            param.setResult(fake);
+                        }
                     }
                 }
-            });
-        } catch (Throwable t) {
-            XposedBridge.log("Splash hook failed: " + t.getMessage());
+            );
+        } catch(Throwable t) {
+            XposedBridge.log("Failed hook OkHttp execute: " + t.getMessage());
         }
 
-        // ═══ 3. Performance tweaks ═══
-        // 3.1 Animasi kustom → durasi minimal
-        XC_MethodHook animHook = new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) {
-                param.args[0] = 1L;
-            }
-        };
-        XposedHelpers.findAndHookMethod(ValueAnimator.class, "setDuration", long.class, animHook);
-        XposedHelpers.findAndHookMethod(ObjectAnimator.class, "setDuration", long.class, animHook);
-        XposedHelpers.findAndHookMethod(ViewPropertyAnimator.class, "setDuration", long.class, animHook);
-
-        // 3.2 Matikan Log.d/i/v/w/e
-        Class<?> logClass = XposedHelpers.findClass("android.util.Log", cl);
-        for (String lvl : new String[]{"d","i","v","w","e"}) {
-            XposedHelpers.findAndHookMethod(logClass, lvl,
-                String.class, String.class,
+        // 3) Force NetInfo.isConnected → false (spinner dimatikan)
+        try {
+            XposedHelpers.findAndHookMethod(
+                NetInfoModule.class,
+                "getCurrentConnectivity",
+                Promise.class,
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) {
-                        param.setResult(0);
+                        // langsung resolve dengan isConnected=false
+                        Bundle info = new Bundle();
+                        info.putBoolean("isConnected", false);
+                        ((Promise)param.args[0]).resolve(info);
+                        param.setResult(null);
+                        XposedBridge.log("NetInfo override: set isConnected=false");
                     }
-                });
+                }
+            );
+        } catch(Throwable t) {
+            XposedBridge.log("Failed hook NetInfo: " + t.getMessage());
         }
 
-        // 3.3 Cache decodeResource
-        XposedHelpers.findAndHookMethod(BitmapFactory.class, "decodeResource",
-            Resources.class, int.class, BitmapFactory.Options.class,
-            new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) {
-                    int resId = (Integer) param.args[1];
-                    if (bmpCache.containsKey(resId)) {
-                        param.setResult(bmpCache.get(resId));
+        // 4) (Opsional) Hook AsyncStorage.getItem untuk PIN langsung kembalikan 0000
+        try {
+            XposedHelpers.findAndHookMethod(
+                "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
+                cl,
+                "getItem", String.class, Promise.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) {
+                        String key = (String)param.args[0];
+                        if ("pinCode".equals(key)) {
+                            ((Promise)param.args[1]).resolve("0000");
+                            param.setResult(null);
+                            XposedBridge.log("AsyncStorage getItem pinCode → 0000");
+                        }
                     }
                 }
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) {
-                    int resId = (Integer) param.args[1];
-                    Bitmap bmp = (Bitmap) param.getResult();
-                    bmpCache.put(resId, bmp);
-                }
-            });
+            );
+        } catch(Throwable t) {
+            XposedBridge.log("Failed hook AsyncStorage: " + t.getMessage());
+        }
 
-        // ═══ 4. Camera hook → Open Camera depan ═══
+        // 5) Camera intent hook - open front camera
         XC_MethodHook cameraHook = new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
@@ -137,7 +143,8 @@ public class MainHook implements IXposedHookLoadPackage {
             "startActivityForResult", Intent.class, int.class, cameraHook);
         XposedHelpers.findAndHookMethod(activityClass,
             "startActivityForResult", Intent.class, int.class, Bundle.class, cameraHook);
-        XposedHelpers.findAndHookMethod("android.app.Instrumentation", cl,
+        XposedHelpers.findAndHookMethod(
+            "android.app.Instrumentation", cl,
             "execStartActivity",
             Context.class, IBinder.class, IBinder.class,
             Activity.class, Intent.class, int.class, Bundle.class,
@@ -152,6 +159,34 @@ public class MainHook implements IXposedHookLoadPackage {
                         param.args[4] = orig;
                     }
                 }
-            });
+            }
+        );
+
+        // 4) Splash screen bypass
+        try {
+            Class<?> splashCls = XposedHelpers.findClass(
+                "com.harpamobilehr.MainActivity", cl
+            );
+            XposedHelpers.findAndHookMethod(splashCls, "onCreate", Bundle.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) {
+                        try {
+                            XposedHelpers.callStaticMethod(
+                                XposedHelpers.findClass(
+                                    "org.devio.rn.splashscreen.SplashScreen", cl
+                                ),
+                                "hide", param.thisObject
+                            );
+                            XposedBridge.log("SplashScreen auto-hide injected");
+                        } catch(Throwable e) {
+                            XposedBridge.log("Splash hide failed: " + e.getMessage());
+                        }
+                    }
+                }
+            );
+        } catch(Throwable t) {
+            XposedBridge.log("Splash hook failed: " + t.getMessage());
+        }
     }
 }
