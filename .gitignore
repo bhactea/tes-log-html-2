@@ -1,0 +1,13 @@
+# Gradle
+.gradle/
+**/build/
+gradle-wrapper.jar
+gradlew
+gradlew.bat
+
+# Android Studio
+.idea/
+*.iml
+
+# Keystore
+*.keystore
