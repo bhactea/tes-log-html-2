@@ -1,2 +1,2 @@
-// sertakan modul app
 include ':app'
+rootProject.name = 'RedirectCameraHook'
