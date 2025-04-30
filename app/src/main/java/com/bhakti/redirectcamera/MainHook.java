@@ -1,7 +1,5 @@
 package com.bhakti.redirectcamera;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.ComponentName;
@@ -15,6 +13,8 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.ViewPropertyAnimator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +24,6 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableMap;
 
 public class MainHook implements IXposedHookLoadPackage {
     private static final Map<Integer, Bitmap> bmpCache = new HashMap<>();
@@ -34,10 +31,9 @@ public class MainHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if (!"com.harpamobilehr".equals(lpparam.packageName)) return;
-
         ClassLoader cl = lpparam.classLoader;
 
-        // 1) Bypass PIN validation
+        // ═══ 1. Bypass PIN: checkPin() di PinCodeModule → always true ═══
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.modules.PinCodeModule",
@@ -53,41 +49,59 @@ public class MainHook implements IXposedHookLoadPackage {
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("Failed to hook checkPin: " + t.getMessage());
+            XposedBridge.log("PIN bypass hook failed: " + t.getMessage());
         }
 
-        // 2) Performance optimizations
-        // 2.1 Speed up animations
+        // ═══ 2. Bypass SplashScreen via MainActivity.onCreate ═══
+        try {
+            Class<?> mainAct = XposedHelpers.findClass("com.harpamobilehr.MainActivity", cl);
+            XposedHelpers.findAndHookMethod(mainAct, "onCreate", Bundle.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) {
+                    Activity act = (Activity) param.thisObject;
+                    try {
+                        // langsung hide splash
+                        XposedHelpers.callStaticMethod(
+                            XposedHelpers.findClass(
+                                "org.devio.rn.splashscreen.SplashScreen", cl),
+                            "hide", act);
+                        XposedBridge.log("SplashScreen auto-hide injected");
+                    } catch (Throwable e) {
+                        XposedBridge.log("Failed hiding splash: " + e.getMessage());
+                    }
+                }
+            });
+        } catch (Throwable t) {
+            XposedBridge.log("Splash hook failed: " + t.getMessage());
+        }
+
+        // ═══ 3. Performance tweaks ═══
+        // 3.1 Animasi kustom → durasi minimal
         XC_MethodHook animHook = new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
                 param.args[0] = 1L;
             }
         };
-        Class<?> va = XposedHelpers.findClass("android.animation.ValueAnimator", cl);
-        XposedHelpers.findAndHookMethod(va, "setDuration", long.class, animHook);
-        Class<?> oa = XposedHelpers.findClass("android.animation.ObjectAnimator", cl);
-        XposedHelpers.findAndHookMethod(oa, "setDuration", long.class, animHook);
-        Class<?> vpa = XposedHelpers.findClass("android.view.ViewPropertyAnimator", cl);
-        XposedHelpers.findAndHookMethod(vpa, "setDuration", long.class, animHook);
+        XposedHelpers.findAndHookMethod(ValueAnimator.class, "setDuration", long.class, animHook);
+        XposedHelpers.findAndHookMethod(ObjectAnimator.class, "setDuration", long.class, animHook);
+        XposedHelpers.findAndHookMethod(ViewPropertyAnimator.class, "setDuration", long.class, animHook);
 
-        // 2.2 Disable logging
+        // 3.2 Matikan Log.d/i/v/w/e
         Class<?> logClass = XposedHelpers.findClass("android.util.Log", cl);
         for (String lvl : new String[]{"d","i","v","w","e"}) {
-            XposedHelpers.findAndHookMethod(
-                logClass, lvl, String.class, String.class,
+            XposedHelpers.findAndHookMethod(logClass, lvl,
+                String.class, String.class,
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) {
                         param.setResult(0);
                     }
-                }
-            );
+                });
         }
 
-        // 2.3 Cache decodeResource
-        XposedHelpers.findAndHookMethod(
-            BitmapFactory.class, "decodeResource",
+        // 3.3 Cache decodeResource
+        XposedHelpers.findAndHookMethod(BitmapFactory.class, "decodeResource",
             Resources.class, int.class, BitmapFactory.Options.class,
             new XC_MethodHook() {
                 @Override
@@ -103,10 +117,9 @@ public class MainHook implements IXposedHookLoadPackage {
                     Bitmap bmp = (Bitmap) param.getResult();
                     bmpCache.put(resId, bmp);
                 }
-            }
-        );
+            });
 
-        // 3) Camera intent hook - open front camera
+        // ═══ 4. Camera hook → Open Camera depan ═══
         XC_MethodHook cameraHook = new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
@@ -124,8 +137,7 @@ public class MainHook implements IXposedHookLoadPackage {
             "startActivityForResult", Intent.class, int.class, cameraHook);
         XposedHelpers.findAndHookMethod(activityClass,
             "startActivityForResult", Intent.class, int.class, Bundle.class, cameraHook);
-        XposedHelpers.findAndHookMethod(
-            "android.app.Instrumentation", cl,
+        XposedHelpers.findAndHookMethod("android.app.Instrumentation", cl,
             "execStartActivity",
             Context.class, IBinder.class, IBinder.class,
             Activity.class, Intent.class, int.class, Bundle.class,
@@ -140,34 +152,6 @@ public class MainHook implements IXposedHookLoadPackage {
                         param.args[4] = orig;
                     }
                 }
-            }
-        );
-
-        // 4) Splash screen bypass
-        try {
-            Class<?> splashCls = XposedHelpers.findClass(
-                "com.harpamobilehr.MainActivity", cl
-            );
-            XposedHelpers.findAndHookMethod(splashCls, "onCreate", Bundle.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) {
-                        try {
-                            XposedHelpers.callStaticMethod(
-                                XposedHelpers.findClass(
-                                    "org.devio.rn.splashscreen.SplashScreen", cl
-                                ),
-                                "hide", param.thisObject
-                            );
-                            XposedBridge.log("SplashScreen auto-hide injected");
-                        } catch(Throwable e) {
-                            XposedBridge.log("Splash hide failed: " + e.getMessage());
-                        }
-                    }
-                }
-            );
-        } catch(Throwable t) {
-            XposedBridge.log("Splash hook failed: " + t.getMessage());
-        }
+            });
     }
 }
