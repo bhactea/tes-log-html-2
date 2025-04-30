@@ -1,1 +1,3 @@
-<item name="android:windowDisablePreview">true</item>
+<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  <item name="android:windowDisablePreview">true</item>
+</style>
