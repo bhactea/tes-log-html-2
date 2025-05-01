@@ -1,12 +1,11 @@
 <resources>
-  <!-- Theme untuk launcher, menonaktifkan preview window -->
+  <!-- Tema launcher: matikan preview window putih -->
   <style name="AppTheme.Launcher" parent="Theme.AppCompat.Light.NoActionBar">
-    <!-- Hilangkan kilasan putih sebelum onCreate() -->
     <item name="android:windowDisablePreview">true</item>
   </style>
 
-  <!-- Theme utama tetap bisa pake AppTheme yang sudah ada -->
+  <!-- Tema utama aplikasi -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    <!-- ...item lain jika perlu... -->
+    <!-- bisa tambahkan item lain di sini -->
   </style>
 </resources>
