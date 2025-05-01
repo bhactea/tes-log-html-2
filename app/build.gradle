@@ -14,4 +14,6 @@ android {
 
 dependencies {
     compileOnly files('libs/api-82.jar')
+    // ... dependency lain ...
+    implementation 'androidx.appcompat:appcompat:1.7.0'
 }
