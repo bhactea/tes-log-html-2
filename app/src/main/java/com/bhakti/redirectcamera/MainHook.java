@@ -40,143 +40,132 @@ public class MainHook implements IXposedHookLoadPackage {
                 new XC_MethodHook() {
                     @Override protected void beforeHookedMethod(MethodHookParam param) {
                         param.setResult(true);
-                        XposedBridge.log("PIN bypass: checkPin -> true");
+                        XposedBridge.log("PIN bypass");
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("PIN hook failed: " + t.getMessage());
+            XposedBridge.log("PIN hook error: " + t.getMessage());
         }
 
-        // 2) Hide React Native Splash
+        // 2) Hide SplashScreen in onCreate()
         try {
             Class<?> mainAct = XposedHelpers.findClass("com.harpamobilehr.MainActivity", cl);
-            XposedHelpers.findAndHookMethod(mainAct, "onCreate", Bundle.class, new XC_MethodHook() {
-                @Override protected void afterHookedMethod(MethodHookParam param) {
-                    Activity act = (Activity) param.thisObject;
-                    try {
-                        Class<?> splash = XposedHelpers.findClass(
-                            "org.devio.rn.splashscreen.SplashScreen", cl);
-                        XposedHelpers.callStaticMethod(splash, "hide", act);
-                        XposedBridge.log("Splash hidden");
-                    } catch (Throwable ignored) {}
-                }
-            });
+            XposedHelpers.findAndHookMethod(mainAct, "onCreate", Bundle.class,
+                new XC_MethodHook() {
+                    @Override protected void afterHookedMethod(MethodHookParam p) {
+                        Activity act = (Activity)p.thisObject;
+                        try {
+                            Class<?> splash = XposedHelpers.findClass(
+                                "org.devio.rn.splashscreen.SplashScreen", cl);
+                            XposedHelpers.callStaticMethod(splash, "hide", act);
+                            XposedBridge.log("Splash hidden");
+                        } catch (Throwable ignored) {}
+                    }
+                });
         } catch (Throwable t) {
-            XposedBridge.log("Splash hook failed: " + t.getMessage());
+            XposedBridge.log("Splash hook error: " + t.getMessage());
         }
 
-        // 3) Direct navigation to HomeActivity
+        // 3) Direct jump to HomeActivity on resume
         try {
             Class<?> mainAct = XposedHelpers.findClass("com.harpamobilehr.MainActivity", cl);
-            XposedHelpers.findAndHookMethod(mainAct, "onResume", new XC_MethodHook() {
-                @Override protected void afterHookedMethod(MethodHookParam param) {
-                    Activity act = (Activity) param.thisObject;
-                    try {
-                        Class<?> home = XposedHelpers.findClass(
-                            "com.harpamobilehr.ui.HomeActivity", cl);
-                        Intent i = new Intent(act, home);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        act.startActivity(i);
-                        act.finish();
-                        XposedBridge.log("Navigated to HomeActivity");
-                    } catch (Throwable ignored) {}
-                }
-            });
+            XposedHelpers.findAndHookMethod(mainAct, "onResume",
+                new XC_MethodHook() {
+                    @Override protected void afterHookedMethod(MethodHookParam p) {
+                        Activity act = (Activity)p.thisObject;
+                        try {
+                            Class<?> home = XposedHelpers.findClass(
+                                "com.harpamobilehr.ui.HomeActivity", cl);
+                            Intent i = new Intent(act, home);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            act.startActivity(i);
+                            act.finish();
+                            XposedBridge.log("Jump to Home");
+                        } catch (Throwable ignored) {}
+                    }
+                });
         } catch (Throwable t) {
-            XposedBridge.log("Home navigation hook failed: " + t.getMessage());
+            XposedBridge.log("Home hook error: " + t.getMessage());
         }
 
-        // 4) Bypass config via AsyncStorage
+        // 4) Bypass config via AsyncStorage.multiGet
         try {
             Class<?> asyncCls = XposedHelpers.findClass(
                 "com.reactnativecommunity.asyncstorage.AsyncStorageModule", cl);
-            Class<?> readableArray = XposedHelpers.findClass(
-                "com.facebook.react.bridge.ReadableArray", cl);
-            Class<?> callback = XposedHelpers.findClass(
-                "com.facebook.react.bridge.Callback", cl);
-            XposedHelpers.findAndHookMethod(asyncCls,
-                "multiGet",
-                readableArray, callback,
+            Class<?> ra = XposedHelpers.findClass("com.facebook.react.bridge.ReadableArray", cl);
+            Class<?> cb = XposedHelpers.findClass("com.facebook.react.bridge.Callback", cl);
+
+            XposedHelpers.findAndHookMethod(asyncCls, "multiGet", ra, cb,
                 new XC_MethodHook() {
-                    @Override protected void beforeHookedMethod(MethodHookParam param) {
-                        Object keysArr = param.args[0];
-                        Object cb      = param.args[1];
-                        int size = (int) XposedHelpers.callMethod(keysArr, "size");
-                        Object arrKeys = XposedHelpers.callStaticMethod(
+                    @Override protected void beforeHookedMethod(MethodHookParam p) {
+                        Object keysArr = p.args[0];
+                        Object callback = p.args[1];
+                        int n = (int)XposedHelpers.callMethod(keysArr, "size");
+                        Object outK = XposedHelpers.callStaticMethod(
                             XposedHelpers.findClass("com.facebook.react.bridge.Arguments", cl),
                             "createArray");
-                        Object arrVals = XposedHelpers.callStaticMethod(
+                        Object outV = XposedHelpers.callStaticMethod(
                             XposedHelpers.findClass("com.facebook.react.bridge.Arguments", cl),
                             "createArray");
-                        for (int i = 0; i < size; i++) {
-                            String key = (String) XposedHelpers.callMethod(keysArr, "getString", i);
-                            XposedHelpers.callMethod(arrKeys, "pushString", key);
-                            if ("baseUrl".equals(key) || "serverUrl".equals(key)
-                                || "apiUrl".equals(key) || "config".equals(key)) {
-                                XposedHelpers.callMethod(arrVals, "pushString", "https://api.harpamobilehr.com");
+                        for (int i = 0; i < n; i++) {
+                            String key = (String)XposedHelpers.callMethod(keysArr, "getString", i);
+                            XposedHelpers.callMethod(outK, "pushString", key);
+                            if ("baseUrl".equals(key) || "apiUrl".equals(key)) {
+                                XposedHelpers.callMethod(outV, "pushString",
+                                    "https://api.harpamobilehr.com");
                             } else {
-                                XposedHelpers.callMethod(arrVals, "pushNull");
+                                XposedHelpers.callMethod(outV, "pushNull");
                             }
                         }
-                        XposedHelpers.callMethod(cb, "invoke", arrKeys, arrVals);
-                        param.setResult(null);
-                        XposedBridge.log("Config bypass via multiGet");
+                        XposedHelpers.callMethod(callback, "invoke", outK, outV);
+                        p.setResult(null);
+                        XposedBridge.log("Config bypass");
                     }
-                }
-            );
+                });
         } catch (Throwable t) {
-            XposedBridge.log("Config multiGet hook failed: " + t.getMessage());
+            XposedBridge.log("Config hook error: " + t.getMessage());
         }
 
-        // 5) Performance tweaks: animations & log
-        XC_MethodHook animHook = new XC_MethodHook() {
-            @Override protected void beforeHookedMethod(MethodHookParam param) {
-                param.args[0] = 1L;
+        // 5) Performance tweaks
+        XC_MethodHook anim = new XC_MethodHook() {
+            @Override protected void beforeHookedMethod(MethodHookParam p) {
+                p.args[0] = 1L;
             }
         };
-        XposedHelpers.findAndHookMethod(ValueAnimator.class, "setDuration", long.class, animHook);
-        XposedHelpers.findAndHookMethod(ObjectAnimator.class, "setDuration", long.class, animHook);
-        XposedHelpers.findAndHookMethod(ViewPropertyAnimator.class, "setDuration", long.class, animHook);
+        XposedHelpers.findAndHookMethod(ValueAnimator.class, "setDuration", long.class, anim);
+        XposedHelpers.findAndHookMethod(ObjectAnimator.class, "setDuration", long.class, anim);
+        XposedHelpers.findAndHookMethod(ViewPropertyAnimator.class, "setDuration", long.class, anim);
+
         Class<?> logCls = XposedHelpers.findClass("android.util.Log", cl);
         for (String lvl : new String[]{"d","i","v","w","e"}) {
-            XposedHelpers.findAndHookMethod(logCls, lvl, String.class, String.class,
+            XposedHelpers.findAndHookMethod(logCls, lvl,
+                String.class, String.class,
                 new XC_MethodHook() {
-                    @Override protected void beforeHookedMethod(MethodHookParam param) {
-                        param.setResult(0);
+                    @Override protected void beforeHookedMethod(MethodHookParam p) {
+                        p.setResult(0);
                     }
-                }
-            );
+                });
         }
 
         // 6) Camera hook → Open Camera depan
-        XC_MethodHook camHook = new XC_MethodHook() {
-            @Override protected void beforeHookedMethod(MethodHookParam param) {
-                Intent orig = (Intent) param.args[0];
+        XC_MethodHook cam = new XC_MethodHook() {
+            @Override protected void beforeHookedMethod(MethodHookParam p) {
+                Intent orig = (Intent)p.args[0];
                 if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                     orig.setPackage("net.sourceforge.opencamera");
                     orig.putExtra("android.intent.extras.CAMERA_FACING", 1);
-                    XposedBridge.log("Camera intent → OpenCamera front");
+                    XposedBridge.log("Camera → OpenCamera front");
                 }
             }
         };
         Class<?> actCls = XposedHelpers.findClass("android.app.Activity", cl);
-        XposedHelpers.findAndHookMethod(actCls, "startActivityForResult", Intent.class, int.class, camHook);
-        XposedHelpers.findAndHookMethod(actCls, "startActivityForResult", Intent.class, int.class, Bundle.class, camHook);
+        XposedHelpers.findAndHookMethod(actCls, "startActivityForResult", Intent.class, int.class, cam);
+        XposedHelpers.findAndHookMethod(actCls, "startActivityForResult", Intent.class, int.class, Bundle.class, cam);
         XposedHelpers.findAndHookMethod("android.app.Instrumentation", cl,
             "execStartActivity",
             Context.class, IBinder.class, IBinder.class,
             Activity.class, Intent.class, int.class, Bundle.class,
-            new XC_MethodHook() {
-                @Override protected void beforeHookedMethod(MethodHookParam param) {
-                    Intent orig = (Intent) param.args[4];
-                    if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
-                        orig.setPackage("net.sourceforge.opencamera");
-                        orig.putExtra("android.intent.extras.CAMERA_FACING", 1);
-                        XposedBridge.log("execStartActivity → OpenCamera front");
-                    }
-                }
-            }
-        );
+            cam);
     }
 }
