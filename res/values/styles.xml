@@ -1,5 +1,0 @@
-<resources>
-  <style name="AppTheme.Launcher" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="android:windowDisablePreview">true</item>
-  </style>
-</resources>
