@@ -1,24 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bhakti.redirectcamera">                            <!-- ① Unique package name untuk modul hook :contentReference[oaicite:0]{index=0} -->
+    package="com.bhakti.redirectcamera">  <!-- Harus ada package dan ditutup dengan '>' -->
 
     <application
-        android:name="com.bhakti.redirectcamera.MainApplication"   <!-- ② Ubah nama kelas Application :contentReference[oaicite:1]{index=1} -->
+        android:name="com.bhakti.redirectcamera.MainApplication"
         android:allowBackup="false"
         android:extractNativeLibs="false"
         android:usesCleartextTraffic="false"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:requestLegacyExternalStorage="true"
-        android:theme="@style/AppTheme">                            <!-- ③ Anda bisa tambahkan @style/AppTheme.Launcher di activity saja :contentReference[oaicite:2]{index=2} -->
+        android:theme="@style/AppTheme">    <!-- Pastikan '>' di sini menutup tag -->
 
         <activity
-            android:name="com.bhakti.redirectcamera.MainActivity"  <!-- ④ Ubah nama kelas Activity :contentReference[oaicite:3]{index=3} -->
+            android:name="com.bhakti.redirectcamera.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
             android:windowSoftInputMode="adjustResize"
-            android:theme="@style/AppTheme.Launcher">               <!-- ⑤ Launcher theme untuk menghilangkan preview :contentReference[oaicite:4]{index=4}
-
+            android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
