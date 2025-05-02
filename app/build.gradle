@@ -1,53 +1,43 @@
 // File: app/build.gradle
 
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'            // Jika Anda menulis hook dalam Kotlin, hapus jika Java saja
-apply plugin: 'de.robv.android.xposed.xposed-module'  // Plugin Xposed (sesuaikan jika berbeda)
+apply plugin: 'de.robv.android.xposed.xposed-module'  // Xposed module plugin
 
 android {
-    namespace "com.bhakti.redirectcamera"   // ✅ Wajib AGP ≥ 8.0, menggantikan package di manifest :contentReference[oaicite:2]{index=2}
+    namespace "com.bhakti.redirectcamera"   // AGP 8+: ganti manifest package
     compileSdkVersion 34
-
     defaultConfig {
-        applicationId "com.bhakti.redirectcamera"  // ✅ Unik, jangan samakan dengan Harpa asli
+        applicationId "com.bhakti.redirectcamera"
         minSdkVersion 24
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
     }
-
-    // Mengganti android:extractNativeLibs, AGP 4.2+ :contentReference[oaicite:3]{index=3}
     packagingOptions {
         jniLibs {
             useLegacyPackaging false
         }
     }
-
     buildTypes {
         debug {
-            // Jika perlu, matikan stripping debug agar Xposed log jalan
             minifyEnabled false
             debuggable true
         }
         release {
-            // Sesuaikan ProGuard / R8 jika dipakai
             minifyEnabled false
             signingConfig signingConfigs.debug
         }
     }
-}
+}  // <<< Pastikan blok android ditutup di sini!
 
 dependencies {
-    // Stub Xposed API, sudah Anda taruh di libs/api-82.jar
+    // Xposed stub API
     compileOnly files('libs/api-82.jar')
 
-    // AndroidX AppCompat untuk theme & styles
+    // AndroidX AppCompat
     implementation 'androidx.appcompat:appcompat:1.7.0'
 
-    // Kotlin BOM untuk menyelaraskan semua stdlib ke versi yang sama :contentReference[oaicite:4]{index=4}
+    // Kotlin stdlib (jika Anda benar-benar menggunakan kode Kotlin)
     implementation platform("org.jetbrains.kotlin:kotlin-bom:1.8.22")
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
-
-    // Xposed Helpers, Bridge (jika perlu runtime)
-    implementation 'de.robv.android.xposed:api:82'  // pastikan repository Maven Anda sudah benar
 }
