@@ -1,26 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    >
-    <application
-        android:name="com.bhakti.redirectcamera.MainApplication"
-        android:allowBackup="false"
-        android:usesCleartextTraffic="false"
-        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-        android:requestLegacyExternalStorage="true"
-        android:theme="@style/AppTheme">    <!-- Pastikan '>' di sini menutup tag -->
+    package="com.bhakti.redirectcamera">    <!-- Hanya ID modul, tidak menimpa Harpa -->
 
-        <activity
-            android:name="com.bhakti.redirectcamera.MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/AppTheme.Launcher">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+  <application>
+    <!-- Konfigurasi Xposed -->
+    <meta-data android:name="xposedmodule"        android:value="true" />
+    <meta-data android:name="xposeddescription"   android:value="Redirect Harpa Camera Hook" />
+    <meta-data android:name="xposedminversion"    android:value="82" />
+    <meta-data android:name="xposedmodule_author" android:value="bhactea" />
+    <meta-data android:name="xposedmodule_main"   android:value="com.bhakti.redirectcamera.MainHook" />
+  </application>
 
-    </application>
 </manifest>
