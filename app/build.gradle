@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace "com.harpamobilehr"
     compileSdkVersion 34
     defaultConfig {
         applicationId "com.bhakti.redirectcamera"
