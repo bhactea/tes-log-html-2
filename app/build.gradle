@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.harpamobilehr"
-    compileSdkVersion 34
+    namespace "com.bhakti.redirectcamera"      // **Wajib** untuk AGP ≥ 8.0
+    compileSdkVersion 34                       // **Harus** ≥34
     defaultConfig {
-        applicationId "com.bhakti.redirectcamera"
+        applicationId "com.harpamobilehr"
         minSdkVersion 24
-        targetSdkVersion 34
+        targetSdkVersion 34                    // **Disarankan** sama dengan compileSdk
     }
     buildTypes {
         release { minifyEnabled false }
