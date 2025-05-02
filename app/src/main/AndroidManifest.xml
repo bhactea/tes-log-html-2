@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bhakti.redirectcamera">  <!-- Harus ada package dan ditutup dengan '>' -->
-
+    >
     <application
         android:name="com.bhakti.redirectcamera.MainApplication"
         android:allowBackup="false"
