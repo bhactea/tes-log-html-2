@@ -9,7 +9,7 @@
     android:networkSecurityConfig="@xml/network_security_config"
     android:appComponentFactory="androidx.core.app.CoreComponentFactory"
     android:requestLegacyExternalStorage="true"
-    android:theme="@style/AppTheme">  <!-- theme umum -->
+    android:theme="@style/AppTheme">
     
     <activity
         android:name="com.harpamobilehr.MainActivity"
@@ -18,17 +18,14 @@
         android:screenOrientation="portrait"
         android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
         android:windowSoftInputMode="adjustResize"
-        android:theme="@style/AppTheme.Launcher">  <!-- override untuk preview window -->
+        android:theme="@style/AppTheme.Launcher">
         
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-        <!-- ...intent-filter lain... -->
     </activity>
     
-    <!-- deklarasi service, receiver, provider lain -->
 </application>
-
 
 </manifest>
