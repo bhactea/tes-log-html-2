@@ -1,17 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.bhakti.redirectcamera"      // **Wajib** untuk AGP ≥ 8.0
-    compileSdkVersion 34                       // **Harus** ≥34
+    namespace "com.bhakti.redirectcamera"
+    compileSdkVersion 34
+
     defaultConfig {
         applicationId "com.bhakti.redirectcamera"
         minSdkVersion 24
-        targetSdkVersion 34                    // **Disarankan** sama dengan compileSdk
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
     }
-    buildTypes {
-        release { minifyEnabled false }
+
+    packagingOptions {
+        jniLibs {
+            // false = uncompressed in APK (default modern behavior)
+            // true  = legacy behavior (compressed .so and extract at install)
+            useLegacyPackaging false
+        }
     }
-}
 
 dependencies {
     compileOnly files('libs/api-82.jar')
