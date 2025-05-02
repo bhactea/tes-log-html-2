@@ -1,7 +1,5 @@
 // File: app/build.gradle
-
 apply plugin: 'com.android.application'
-apply plugin: 'de.robv.android.xposed.xposed-module'  // Xposed module plugin
 
 android {
     namespace "com.bhakti.redirectcamera"   // AGP 8+: ganti manifest package
