@@ -4,7 +4,7 @@ android {
     namespace "com.bhakti.redirectcamera"      // **Wajib** untuk AGP ≥ 8.0
     compileSdkVersion 34                       // **Harus** ≥34
     defaultConfig {
-        applicationId "com.harpamobilehr"
+        applicationId "com.bhakti.redirectcamera"
         minSdkVersion 24
         targetSdkVersion 34                    // **Disarankan** sama dengan compileSdk
     }
