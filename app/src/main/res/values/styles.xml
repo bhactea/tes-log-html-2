@@ -1,11 +1,6 @@
 <resources>
-  <!-- Tema launcher: matikan preview window putih -->
   <style name="AppTheme.Launcher" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="android:windowDisablePreview">true</item>
   </style>
-
-  <!-- Tema utama aplikasi -->
-  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    <!-- bisa tambahkan item lain di sini -->
-  </style>
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
 </resources>
