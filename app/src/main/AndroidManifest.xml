@@ -3,7 +3,6 @@
     <application
         android:name="com.bhakti.redirectcamera.MainApplication"
         android:allowBackup="false"
-        android:extractNativeLibs="false"
         android:usesCleartextTraffic="false"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:requestLegacyExternalStorage="true"
