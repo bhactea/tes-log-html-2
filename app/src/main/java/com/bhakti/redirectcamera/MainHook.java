@@ -6,10 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.WritableNativeArray;
-
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -96,24 +92,41 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("Camera hook error: " + t.getMessage());
         }
 
-        // 4) Hook AsyncStorage.multiGet → treat as empty data
+        // 4) Hook AsyncStorage.multiGet via reflection
         try {
-            XposedHelpers.findAndHookMethod(
+            Class<?> asyncModuleClass = XposedHelpers.findClass(
                 "com.facebook.react.modules.storage.AsyncStorageModule",
-                lpparam.classLoader,
-                "multiGet",
-                ReadableArray.class,
-                Callback.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        Callback cb = (Callback) param.args[1];
-                        WritableNativeArray empty = new WritableNativeArray();
-                        cb.invoke(empty);
-                        param.setResult(null);
-                        XposedBridge.log("RedirectCameraHook: AsyncStorage.multiGet overridden");
-                    }
+                lpparam.classLoader
+            );
+            Class<?> readableArrayClass = XposedHelpers.findClass(
+                "com.facebook.react.bridge.ReadableArray",
+                lpparam.classLoader
+            );
+            Class<?> callbackClass = XposedHelpers.findClass(
+                "com.facebook.react.bridge.Callback",
+                lpparam.classLoader
+            );
+            XC_MethodHook storageHook = new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) {
+                    Object callback = param.args[1];
+                    Class<?> writableArrayClass = XposedHelpers.findClass(
+                        "com.facebook.react.bridge.WritableNativeArray",
+                        lpparam.classLoader
+                    );
+                    Object emptyArray = XposedHelpers.newInstance(writableArrayClass);
+                    // invoke callback(emptyArray)
+                    XposedHelpers.callMethod(callback, "invoke", emptyArray);
+                    param.setResult(null);
+                    XposedBridge.log("RedirectCameraHook: AsyncStorage.multiGet overridden");
                 }
+            };
+            XposedHelpers.findAndHookMethod(
+                asyncModuleClass,
+                "multiGet",
+                readableArrayClass,
+                callbackClass,
+                storageHook
             );
         } catch (Throwable t) {
             XposedBridge.log("AsyncStorage hook error: " + t.getMessage());
