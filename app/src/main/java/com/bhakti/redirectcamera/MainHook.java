@@ -95,44 +95,4 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("RedirectCameraHook: Camera hook error: " + t.getMessage());
         }
 
-        // 4) (Optional) Bypass AsyncStorage splash/flag jika diperlukan
-        try {
-            Class<?> asyncCls = XposedHelpers.findClass(
-                "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
-                lpparam.classLoader
-            );
-            XposedHelpers.findAndHookMethod(
-                asyncCls,
-                "multiGet",
-                com.facebook.react.bridge.ReadableArray.class,
-                com.facebook.react.bridge.Callback.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        com.facebook.react.bridge.ReadableArray keys =
-                            (com.facebook.react.bridge.ReadableArray) param.args[0];
-                        com.facebook.react.bridge.Callback cb =
-                            (com.facebook.react.bridge.Callback) param.args[1];
-                        java.util.List<java.util.List<String>> result = new java.util.ArrayList<>();
-                        for (int i = 0; i < keys.size(); i++) {
-                            String key = keys.getString(i);
-                            java.util.List<String> entry = new java.util.ArrayList<>();
-                            entry.add(key);
-                            if ("hasSeenSplash".equals(key)) {
-                                entry.add("true");
-                            } else {
-                                entry.add(null);
-                            }
-                            result.add(entry);
-                        }
-                        cb.invoke(null, result);
-                        param.setResult(null);
-                        XposedBridge.log("RedirectCameraHook: AsyncStorage multiGet bypassed");
-                    }
-                }
-            );
-        } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: AsyncStorage hook skip");
-        }
-    }
-}
+        
