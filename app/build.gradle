@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.library'
+    id 'com.android.application'
 }
 
 android {
@@ -7,6 +7,7 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
+        applicationId "com.bhakti.redirectcamera"
         minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
@@ -21,13 +22,8 @@ android {
 }
 
 dependencies {
-    // Xposed API 82
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    // Multidex support
     implementation "androidx.multidex:multidex:2.0.1"
-
-    // AppCompat untuk Theme.AppCompat.Light.NoActionBar
     def appcompat_version = "1.7.0"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 }
