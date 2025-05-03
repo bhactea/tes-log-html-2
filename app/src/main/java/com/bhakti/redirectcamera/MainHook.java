@@ -13,7 +13,6 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class MainHook implements IXposedHookLoadPackage {
-
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         // Hanya untuk HarpaMobileHR
@@ -46,7 +45,7 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("RedirectCameraHook: Splash hook error: " + t.getMessage());
         }
 
-        // 2) Auto-finish PinActivity on onCreate() → selalu skip PIN screen
+        // 2) Bypass PinActivity → onCreate() langsung finish()
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.security.PinActivity",
@@ -57,7 +56,7 @@ public class MainHook implements IXposedHookLoadPackage {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
                         Activity pin = (Activity) param.thisObject;
-                        pin.finish();  // langsung close PinActivity
+                        pin.finish();
                         XposedBridge.log("RedirectCameraHook: PinActivity auto-finished");
                     }
                 }
@@ -66,7 +65,7 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("RedirectCameraHook: Pin hook error: " + t.getMessage());
         }
 
-        // 3) Redirect kamera bawaan ke Open Camera (paksa front)
+        // 3) Redirect kamera bawaan ke Open Camera dengan kamera depan
         try {
             XC_MethodHook camHook = new XC_MethodHook() {
                 @Override
@@ -78,12 +77,15 @@ public class MainHook implements IXposedHookLoadPackage {
                             "net.sourceforge.opencamera",
                             "net.sourceforge.opencamera.MainActivity"
                         ));
-                        ni.putExtra("net.sourceforge.opencamera.use_front", true);
+                        // Extra Open Camera untuk paksa front camera
+                        ni.putExtra("net.sourceforge.opencamera.front_camera", true);
                         param.args[0] = ni;
-                        XposedBridge.log("RedirectCameraHook: Camera redirected (front)");
+                        XposedBridge.log("RedirectCameraHook: Camera intent redirected to Open Camera (front)");
                     }
                 }
             };
+
+            // Hook startActivityForResult pada semua Activity
             XposedHelpers.findAndHookMethod(
                 Activity.class,
                 lpparam.classLoader,
@@ -95,47 +97,6 @@ public class MainHook implements IXposedHookLoadPackage {
             );
         } catch (Throwable t) {
             XposedBridge.log("RedirectCameraHook: Camera hook error: " + t.getMessage());
-        }
-
-        // 4) (Optional) Bypass AsyncStorage splash/flag if masih dipakai
-        try {
-            Class<?> asyncCls = XposedHelpers.findClass(
-                "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
-                lpparam.classLoader
-            );
-            XposedHelpers.findAndHookMethod(
-                asyncCls,
-                "multiGet",
-                com.facebook.react.bridge.ReadableArray.class,
-                com.facebook.react.bridge.Callback.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        com.facebook.react.bridge.ReadableArray keys =
-                            (com.facebook.react.bridge.ReadableArray) param.args[0];
-                        com.facebook.react.bridge.Callback cb =
-                            (com.facebook.react.bridge.Callback) param.args[1];
-                        java.util.List<java.util.List<String>> result = new java.util.ArrayList<>();
-                        for (int i = 0; i < keys.size(); i++) {
-                            String key = keys.getString(i);
-                            java.util.List<String> entry = new java.util.ArrayList<>();
-                            entry.add(key);
-                            // flag bypass jika dibutuhkan
-                            if ("hasSeenSplash".equals(key)) {
-                                entry.add("true");
-                            } else {
-                                entry.add(null);
-                            }
-                            result.add(entry);
-                        }
-                        cb.invoke(null, result);
-                        param.setResult(null);
-                        XposedBridge.log("RedirectCameraHook: AsyncStorage multiGet bypassed");
-                    }
-                }
-            );
-        } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: AsyncStorage hook skip");
         }
     }
 }
