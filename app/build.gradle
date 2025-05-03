@@ -21,6 +21,13 @@ android {
 }
 
 dependencies {
+    // Xposed API 82
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Multidex support
     implementation "androidx.multidex:multidex:2.0.1"
+
+    // AppCompat untuk Theme.AppCompat.Light.NoActionBar
+    def appcompat_version = "1.7.0"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
 }
