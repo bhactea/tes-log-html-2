@@ -66,33 +66,73 @@ public class MainHook implements IXposedHookLoadPackage {
         }
 
         // 3) Redirect kamera bawaan ke Open Camera (front)
-try {
-    XC_MethodHook camHook = new XC_MethodHook() {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) {
-            Intent orig = (Intent) param.args[0];
-            if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
-                Intent ni = new Intent(orig);
-                ni.setComponent(new ComponentName(
-                    "net.sourceforge.opencamera",
-                    "net.sourceforge.opencamera.MainActivity"
-                ));
-                ni.putExtra("net.sourceforge.opencamera.use_front", true);
-                param.args[0] = ni;
-                XposedBridge.log("Camera redirected to front Open Camera");
-            }
+        try {
+            XC_MethodHook camHook = new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) {
+                    Intent orig = (Intent) param.args[0];
+                    if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
+                        Intent ni = new Intent(orig);
+                        ni.setComponent(new ComponentName(
+                            "net.sourceforge.opencamera",
+                            "net.sourceforge.opencamera.MainActivity"
+                        ));
+                        ni.putExtra("net.sourceforge.opencamera.use_front", true);
+                        param.args[0] = ni;
+                        XposedBridge.log("RedirectCameraHook: Camera redirected to front Open Camera");
+                    }
+                }
+            };
+            XposedHelpers.findAndHookMethod(
+                Activity.class,
+                "startActivityForResult",
+                Intent.class,
+                int.class,
+                Bundle.class,
+                camHook
+            );
+        } catch (Throwable t) {
+            XposedBridge.log("RedirectCameraHook: Camera hook error: " + t.getMessage());
         }
-    };
-    // **Perbaikan**: overload yang benar, tanpa ClassLoader
-    XposedHelpers.findAndHookMethod(
-        android.app.Activity.class,
-        "startActivityForResult",
-        android.content.Intent.class,
-        int.class,
-        android.os.Bundle.class,
-        camHook
-    );
-} catch (Throwable t) {
-    XposedBridge.log("Camera hook error: " + t.getMessage());
-}
+
+        // 4) (Optional) Bypass AsyncStorage splash/flag jika diperlukan
+        try {
+            Class<?> asyncCls = XposedHelpers.findClass(
+                "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
+                lpparam.classLoader
+            );
+            XposedHelpers.findAndHookMethod(
+                asyncCls,
+                "multiGet",
+                com.facebook.react.bridge.ReadableArray.class,
+                com.facebook.react.bridge.Callback.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) {
+                        com.facebook.react.bridge.ReadableArray keys =
+                            (com.facebook.react.bridge.ReadableArray) param.args[0];
+                        com.facebook.react.bridge.Callback cb =
+                            (com.facebook.react.bridge.Callback) param.args[1];
+                        java.util.List<java.util.List<String>> result = new java.util.ArrayList<>();
+                        for (int i = 0; i < keys.size(); i++) {
+                            String key = keys.getString(i);
+                            java.util.List<String> entry = new java.util.ArrayList<>();
+                            entry.add(key);
+                            if ("hasSeenSplash".equals(key)) {
+                                entry.add("true");
+                            } else {
+                                entry.add(null);
+                            }
+                            result.add(entry);
+                        }
+                        cb.invoke(null, result);
+                        param.setResult(null);
+                        XposedBridge.log("RedirectCameraHook: AsyncStorage multiGet bypassed");
+                    }
+                }
+            );
+        } catch (Throwable t) {
+            XposedBridge.log("RedirectCameraHook: AsyncStorage hook skip");
+        }
+    }
 }
