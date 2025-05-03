@@ -65,38 +65,33 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("RedirectCameraHook: Pin hook error: " + t.getMessage());
         }
 
-        // 3) Redirect kamera bawaan ke Open Camera dengan kamera depan
-        try {
-            XC_MethodHook camHook = new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) {
-                    Intent orig = (Intent) param.args[0];
-                    if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
-                        Intent ni = new Intent(orig);
-                        ni.setComponent(new ComponentName(
-                            "net.sourceforge.opencamera",
-                            "net.sourceforge.opencamera.MainActivity"
-                        ));
-                        // Extra Open Camera untuk paksa front camera
-                        ni.putExtra("net.sourceforge.opencamera.front_camera", true);
-                        param.args[0] = ni;
-                        XposedBridge.log("RedirectCameraHook: Camera intent redirected to Open Camera (front)");
-                    }
-                }
-            };
-
-            // Hook startActivityForResult pada semua Activity
-            XposedHelpers.findAndHookMethod(
-                Activity.class,
-                lpparam.classLoader,
-                "startActivityForResult",
-                Intent.class,
-                int.class,
-                Bundle.class,
-                camHook
-            );
-        } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: Camera hook error: " + t.getMessage());
+        // 3) Redirect kamera bawaan ke Open Camera (front)
+try {
+    XC_MethodHook camHook = new XC_MethodHook() {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) {
+            Intent orig = (Intent) param.args[0];
+            if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
+                Intent ni = new Intent(orig);
+                ni.setComponent(new ComponentName(
+                    "net.sourceforge.opencamera",
+                    "net.sourceforge.opencamera.MainActivity"
+                ));
+                ni.putExtra("net.sourceforge.opencamera.use_front", true);
+                param.args[0] = ni;
+                XposedBridge.log("Camera redirected to front Open Camera");
+            }
         }
-    }
+    };
+    // **Perbaikan**: overload yang benar, tanpa ClassLoader
+    XposedHelpers.findAndHookMethod(
+        android.app.Activity.class,
+        "startActivityForResult",
+        android.content.Intent.class,
+        int.class,
+        android.os.Bundle.class,
+        camHook
+    );
+} catch (Throwable t) {
+    XposedBridge.log("Camera hook error: " + t.getMessage());
 }
