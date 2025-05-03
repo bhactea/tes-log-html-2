@@ -39,7 +39,5 @@ jobs:
       with:
         name: RedirectCameraHook-Release
         path: |
-          # Secara eksplisit
           app/build/outputs/apk/release/CameraRedirect-release.apk
-          # Atau pakai wildcard supaya fleksibel
           app/build/outputs/apk/release/*.apk
