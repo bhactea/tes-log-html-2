@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android' // jika pakai Kotlin; hapus jika pure Java
-}
+    }
 
 android {
     compileSdkVersion 33
