@@ -1,8 +1,10 @@
 # RedirectCameraHook
-hook harpa ke open camera (depan)
-hook make app things force closed to minimize
-hook splash screen
-hook pin code request
 
+1. hook harpa ke open camera (depan)
+2. hook make app things force closed to minimize
+3. hook splash screen
+4. hook pin code request
+
+. 
 #warn!!
 always use with your own risk 
