@@ -94,5 +94,5 @@ public class MainHook implements IXposedHookLoadPackage {
         } catch (Throwable t) {
             XposedBridge.log("RedirectCameraHook: Camera hook error: " + t.getMessage());
         }
-
-        
+    }
+}
