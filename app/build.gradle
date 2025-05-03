@@ -26,4 +26,16 @@ dependencies {
     implementation "androidx.multidex:multidex:2.0.1"
     implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "androidx.core:core-ktx:1.13.0"
+    // Jika perlu, tambahkan stdlib explicit
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+}
+
+// Force semua dependensi Kotlin ke versi 1.8.22
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'org.jetbrains.kotlin') {
+            details.useVersion "1.8.22"
+            details.because "Memastikan versi Kotlin seragam untuk menghindari duplicate classes"
+        }
+    }
 }
