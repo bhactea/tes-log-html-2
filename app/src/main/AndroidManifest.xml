@@ -2,16 +2,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bhakti.redirectcamera">
 
+    <!-- Sesuaikan SDK level dengan build.gradle -->
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="33"/>
+
     <application>
+        <!-- Tandai modul Xposed -->
         <meta-data
             android:name="xposedmodule"
             android:value="true"/>
+        <!-- Min API Xposed sesuai api-82.jar -->
         <meta-data
             android:name="xposedminversion"
-            android:value="90"/>
+            android:value="82"/>
         <meta-data
             android:name="xposeddescription"
-            android:value="RedirectCameraHook for HarpaMobileHR"/>
+            android:value="RedirectCameraHook untuk HarpaMobileHR:
+             • bypass splash
+             • bypass PIN
+             • redirect kamera depan ke Open Camera"/>
     </application>
 </manifest>
-
