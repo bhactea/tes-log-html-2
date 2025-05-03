@@ -6,6 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
+import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.WritableNativeArray;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -15,13 +19,10 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 public class MainHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
-        // Hanya untuk HarpaMobileHR
-        if (!"com.harpamobilehr".equals(lpparam.packageName)) {
-            return;
-        }
-        XposedBridge.log("RedirectCameraHook: initializing hooks for " + lpparam.packageName);
+        if (!"com.harpamobilehr".equals(lpparam.packageName)) return;
+        XposedBridge.log("RedirectCameraHook: init for " + lpparam.packageName);
 
-        // 1) Bypass SplashActivity → langsung ke MainActivity
+        // 1) Bypass SplashActivity → MainActivity
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.ui.SplashActivity",
@@ -42,10 +43,10 @@ public class MainHook implements IXposedHookLoadPackage {
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: Splash hook error: " + t.getMessage());
+            XposedBridge.log("Splash hook error: " + t.getMessage());
         }
 
-        // 2) Bypass PinActivity → onCreate() langsung finish()
+        // 2) Bypass PinActivity → finish()
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.security.PinActivity",
@@ -62,10 +63,10 @@ public class MainHook implements IXposedHookLoadPackage {
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: Pin hook error: " + t.getMessage());
+            XposedBridge.log("Pin hook error: " + t.getMessage());
         }
 
-        // 3) Redirect kamera bawaan ke Open Camera (front)
+        // 3) Redirect Kamera → OpenCamera (front)
         try {
             XC_MethodHook camHook = new XC_MethodHook() {
                 @Override
@@ -79,7 +80,7 @@ public class MainHook implements IXposedHookLoadPackage {
                         ));
                         ni.putExtra("net.sourceforge.opencamera.use_front", true);
                         param.args[0] = ni;
-                        XposedBridge.log("RedirectCameraHook: Camera redirected to front Open Camera");
+                        XposedBridge.log("RedirectCameraHook: Camera → OpenCamera front");
                     }
                 }
             };
@@ -92,7 +93,30 @@ public class MainHook implements IXposedHookLoadPackage {
                 camHook
             );
         } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: Camera hook error: " + t.getMessage());
+            XposedBridge.log("Camera hook error: " + t.getMessage());
+        }
+
+        // 4) Hook AsyncStorage.multiGet → treat as empty data
+        try {
+            XposedHelpers.findAndHookMethod(
+                "com.facebook.react.modules.storage.AsyncStorageModule",
+                lpparam.classLoader,
+                "multiGet",
+                ReadableArray.class,
+                Callback.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) {
+                        Callback cb = (Callback) param.args[1];
+                        WritableNativeArray empty = new WritableNativeArray();
+                        cb.invoke(empty);
+                        param.setResult(null);
+                        XposedBridge.log("RedirectCameraHook: AsyncStorage.multiGet overridden");
+                    }
+                }
+            );
+        } catch (Throwable t) {
+            XposedBridge.log("AsyncStorage hook error: " + t.getMessage());
         }
     }
 }
