@@ -95,3 +95,4 @@ try {
 } catch (Throwable t) {
     XposedBridge.log("Camera hook error: " + t.getMessage());
 }
+}
