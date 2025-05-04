@@ -39,7 +39,7 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("RedirectCameraHook: MainActivity hook error: " + t.getMessage());
         }
 
-        // 2) Redirect default camera intent to OpenCamera front
+        // 2) Redirect default camera intent via Activity
         try {
             XC_MethodHook camHook = new XC_MethodHook() {
                 @Override
@@ -57,7 +57,7 @@ public class MainHook implements IXposedHookLoadPackage {
                         ));
                         ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         param.args[0] = ni;
-                        XposedBridge.log("RedirectCameraHook: Camera redirected to OpenCamera front");
+                        XposedBridge.log("RedirectCameraHook: (Activity) Camera redirected to OpenCamera front");
                     }
                 }
             };
@@ -68,10 +68,42 @@ public class MainHook implements IXposedHookLoadPackage {
                 camHook
             );
         } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: Camera hook error: " + t.getMessage());
+            XposedBridge.log("RedirectCameraHook: Activity camera hook error: " + t.getMessage());
         }
 
-        // 3) Hook AsyncStorage.multiGet to return empty values array of [key, ""] pairs
+        // 2.b) Redirect default camera intent via ReactContext
+        try {
+            XposedHelpers.findAndHookMethod(
+                "com.facebook.react.bridge.ReactContext",
+                lpparam.classLoader,
+                "startActivityForResult",
+                Intent.class, int.class, Bundle.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) {
+                        Intent orig = (Intent) param.args[0];
+                        if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
+                            Intent ni = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            ni.putExtra("android.intent.extras.CAMERA_FACING",
+                                        android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
+                            ni.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+                            ni.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
+                            ni.setComponent(new ComponentName(
+                                "net.sourceforge.opencamera",
+                                "net.sourceforge.opencamera.CameraActivity"
+                            ));
+                            ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            param.args[0] = ni;
+                            XposedBridge.log("RedirectCameraHook: (ReactContext) Camera redirected to OpenCamera front");
+                        }
+                    }
+                }
+            );
+        } catch (Throwable t) {
+            XposedBridge.log("RedirectCameraHook: ReactContext camera hook error: " + t.getMessage());
+        }
+
+        // 3) Hook AsyncStorage.multiGet to return [key, ""] pairs
         try {
             Class<?> storageClass = XposedHelpers.findClass(
                 "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
@@ -100,15 +132,14 @@ public class MainHook implements IXposedHookLoadPackage {
                         Object keysArray = param.args[0];
                         Object callback = param.args[1];
 
-                        // Create outer WritableNativeArray
+                        // Create outer array
                         Object outer = XposedHelpers.newInstance(writableArrayClass);
 
-                        // Reflectively obtain size and getString
+                        // Reflectively access size and getString
                         Method sizeM = keysArray.getClass().getMethod("size");
                         Method getM = keysArray.getClass().getMethod("getString", int.class);
                         int size = (Integer) sizeM.invoke(keysArray);
 
-                        // For each key, add [key, ""]
                         for (int i = 0; i < size; i++) {
                             String key = (String) getM.invoke(keysArray, i);
                             Object inner = XposedHelpers.newInstance(writableArrayClass);
@@ -117,9 +148,8 @@ public class MainHook implements IXposedHookLoadPackage {
                             XposedHelpers.callMethod(outer, "pushArray", inner);
                         }
 
-                        // Invoke callback.invoke(Object[])
-                        Method invokeM = callback.getClass()
-                            .getMethod("invoke", Object[].class);
+                        // Invoke callback.invoke(Object...)
+                        Method invokeM = callback.getClass().getMethod("invoke", Object[].class);
                         invokeM.invoke(callback, new Object[]{outer});
 
                         param.setResult(null);
