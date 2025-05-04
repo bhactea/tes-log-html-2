@@ -3,6 +3,7 @@ package com.bhakti.redirectcamera;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
@@ -17,11 +18,11 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 public class MainHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
-        // Only target HarpaMobileHR
+        // 0) Pastikan hanya untuk HarpaMobileHR
         if (!"com.harpamobilehr".equals(lpparam.packageName)) return;
         XposedBridge.log("RedirectCameraHook: init for " + lpparam.packageName);
 
-        // 1) Bypass splash & PIN via MainActivity.onCreate
+        // 1) Bypass splash & PIN di MainActivity
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.MainActivity",
@@ -36,10 +37,10 @@ public class MainHook implements IXposedHookLoadPackage {
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: MainActivity hook error: " + t.getMessage());
+            XposedBridge.log("MainActivity hook error: " + t.getMessage());
         }
 
-        // 2) Redirect default camera intent via Activity
+        // 2a) Redirect kamera via Activity.startActivityForResult
         try {
             XC_MethodHook camHook = new XC_MethodHook() {
                 @Override
@@ -47,17 +48,18 @@ public class MainHook implements IXposedHookLoadPackage {
                     Intent orig = (Intent) param.args[0];
                     if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                         Intent ni = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        ni.putExtra("android.intent.extras.CAMERA_FACING",
-                                    android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
+                        // Standard extras front camera :contentReference[oaicite:0]{index=0}
                         ni.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+                        ni.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
                         ni.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
+                        // OpenCamera-specific component :contentReference[oaicite:1]{index=1}
                         ni.setComponent(new ComponentName(
                             "net.sourceforge.opencamera",
                             "net.sourceforge.opencamera.CameraActivity"
                         ));
                         ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         param.args[0] = ni;
-                        XposedBridge.log("RedirectCameraHook: (Activity) Camera redirected to OpenCamera front");
+                        XposedBridge.log("RedirectCameraHook: (Activity) Camera → OpenCamera front");
                     }
                 }
             };
@@ -68,10 +70,10 @@ public class MainHook implements IXposedHookLoadPackage {
                 camHook
             );
         } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: Activity camera hook error: " + t.getMessage());
+            XposedBridge.log("Activity camera hook error: " + t.getMessage());
         }
 
-        // 2.b) Redirect default camera intent via ReactContext
+        // 2b) Redirect kamera via ReactContext.startActivityForResult
         try {
             XposedHelpers.findAndHookMethod(
                 "com.facebook.react.bridge.ReactContext",
@@ -84,9 +86,8 @@ public class MainHook implements IXposedHookLoadPackage {
                         Intent orig = (Intent) param.args[0];
                         if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                             Intent ni = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            ni.putExtra("android.intent.extras.CAMERA_FACING",
-                                        android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
                             ni.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+                            ni.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
                             ni.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
                             ni.setComponent(new ComponentName(
                                 "net.sourceforge.opencamera",
@@ -94,16 +95,16 @@ public class MainHook implements IXposedHookLoadPackage {
                             ));
                             ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             param.args[0] = ni;
-                            XposedBridge.log("RedirectCameraHook: (ReactContext) Camera redirected to OpenCamera front");
+                            XposedBridge.log("RedirectCameraHook: (ReactContext) Camera → OpenCamera front");
                         }
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: ReactContext camera hook error: " + t.getMessage());
+            XposedBridge.log("ReactContext camera hook error: " + t.getMessage());
         }
 
-        // 3) Hook AsyncStorage.multiGet to return [key, ""] pairs
+        // 3) Hook AsyncStorage.multiGet untuk return [key,""] pairs
         try {
             Class<?> storageClass = XposedHelpers.findClass(
                 "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
@@ -132,10 +133,9 @@ public class MainHook implements IXposedHookLoadPackage {
                         Object keysArray = param.args[0];
                         Object callback = param.args[1];
 
-                        // Create outer array
+                        // Build outer array
                         Object outer = XposedHelpers.newInstance(writableArrayClass);
 
-                        // Reflectively access size and getString
                         Method sizeM = keysArray.getClass().getMethod("size");
                         Method getM = keysArray.getClass().getMethod("getString", int.class);
                         int size = (Integer) sizeM.invoke(keysArray);
@@ -148,9 +148,9 @@ public class MainHook implements IXposedHookLoadPackage {
                             XposedHelpers.callMethod(outer, "pushArray", inner);
                         }
 
-                        // Invoke callback.invoke(Object...)
+                        // Correct varargs reflection call 
                         Method invokeM = callback.getClass().getMethod("invoke", Object[].class);
-                        invokeM.invoke(callback, new Object[]{outer});
+                        invokeM.invoke(callback, (Object) new Object[]{outer});
 
                         param.setResult(null);
                         XposedBridge.log("RedirectCameraHook: AsyncStorage.multiGet returned empty values");
@@ -158,7 +158,7 @@ public class MainHook implements IXposedHookLoadPackage {
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("RedirectCameraHook: AsyncStorage hook error: " + t.getMessage());
+            XposedBridge.log("AsyncStorage hook error: " + t.getMessage());
         }
     }
 }
