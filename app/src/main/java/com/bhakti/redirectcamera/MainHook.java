@@ -74,3 +74,44 @@ public class MainHook implements IXposedHookLoadPackage {
         // 3) Hook AsyncStorage.multiGet (RN community AsyncStorage)
         try {
             Class<?> storageClass = XposedHelpers.findClass(
+                "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
+                lpparam.classLoader
+            );
+            Class<?> readableArray = XposedHelpers.findClass(
+                "com.facebook.react.bridge.ReadableArray",
+                lpparam.classLoader
+            );
+            Class<?> callbackClass = XposedHelpers.findClass(
+                "com.facebook.react.bridge.Callback",
+                lpparam.classLoader
+            );
+
+            XposedHelpers.findAndHookMethod(
+                storageClass,
+                "multiGet",
+                readableArray, callbackClass,
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) {
+                        Object cb = param.args[1];
+                        // Buat WritableNativeArray kosong
+                        Class<?> wnClass = XposedHelpers.findClass(
+                            "com.facebook.react.bridge.WritableNativeArray",
+                            lpparam.classLoader
+                        );
+                        Object empty = XposedHelpers.newInstance(wnClass);
+
+                        // Panggil invoke(Object... args)
+                        Object[] args = new Object[]{ empty };
+                        XposedHelpers.callMethod(cb, "invoke", args);
+
+                        param.setResult(null);
+                        XposedBridge.log("RedirectCameraHook: AsyncStorage.multiGet overridden");
+                    }
+                }
+            );
+        } catch (Throwable t) {
+            XposedBridge.log("RedirectCameraHook: AsyncStorage hook error: " + t.getMessage());
+        }
+    }
+}
