@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
+import java.lang.reflect.Method;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -15,11 +17,11 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 public class MainHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
-        // Hanya jalankan untuk HarpaMobileHR
+        // Only target HarpaMobileHR
         if (!"com.harpamobilehr".equals(lpparam.packageName)) return;
         XposedBridge.log("RedirectCameraHook: init for " + lpparam.packageName);
 
-        // 1) Bypass splash & PIN di MainActivity
+        // 1) Bypass splash & PIN via MainActivity.onCreate
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.MainActivity",
@@ -37,7 +39,7 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("RedirectCameraHook: MainActivity hook error: " + t.getMessage());
         }
 
-        // 2) Redirect kamera bawaan → OpenCamera front
+        // 2) Redirect default camera intent to OpenCamera front
         try {
             XC_MethodHook camHook = new XC_MethodHook() {
                 @Override
@@ -45,12 +47,10 @@ public class MainHook implements IXposedHookLoadPackage {
                     Intent orig = (Intent) param.args[0];
                     if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                         Intent ni = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        // Standard extras untuk kamera depan
                         ni.putExtra("android.intent.extras.CAMERA_FACING",
                                     android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
                         ni.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
                         ni.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
-                        // Target ke OpenCamera
                         ni.setComponent(new ComponentName(
                             "net.sourceforge.opencamera",
                             "net.sourceforge.opencamera.CameraActivity"
@@ -71,13 +71,13 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("RedirectCameraHook: Camera hook error: " + t.getMessage());
         }
 
-        // 3) Hook AsyncStorage.multiGet (RN community AsyncStorage)
+        // 3) Hook AsyncStorage.multiGet to return empty values array of [key, ""] pairs
         try {
             Class<?> storageClass = XposedHelpers.findClass(
                 "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
                 lpparam.classLoader
             );
-            Class<?> readableArray = XposedHelpers.findClass(
+            Class<?> readableArrayClass = XposedHelpers.findClass(
                 "com.facebook.react.bridge.ReadableArray",
                 lpparam.classLoader
             );
@@ -85,28 +85,45 @@ public class MainHook implements IXposedHookLoadPackage {
                 "com.facebook.react.bridge.Callback",
                 lpparam.classLoader
             );
+            Class<?> writableArrayClass = XposedHelpers.findClass(
+                "com.facebook.react.bridge.WritableNativeArray",
+                lpparam.classLoader
+            );
 
             XposedHelpers.findAndHookMethod(
                 storageClass,
                 "multiGet",
-                readableArray, callbackClass,
+                readableArrayClass, callbackClass,
                 new XC_MethodHook() {
                     @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        Object cb = param.args[1];
-                        // Buat WritableNativeArray kosong
-                        Class<?> wnClass = XposedHelpers.findClass(
-                            "com.facebook.react.bridge.WritableNativeArray",
-                            lpparam.classLoader
-                        );
-                        Object empty = XposedHelpers.newInstance(wnClass);
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        Object keysArray = param.args[0];
+                        Object callback = param.args[1];
 
-                        // Panggil invoke(Object... args)
-                        Object[] args = new Object[]{ empty };
-                        XposedHelpers.callMethod(cb, "invoke", args);
+                        // Create outer WritableNativeArray
+                        Object outer = XposedHelpers.newInstance(writableArrayClass);
+
+                        // Reflectively obtain size and getString
+                        Method sizeM = keysArray.getClass().getMethod("size");
+                        Method getM = keysArray.getClass().getMethod("getString", int.class);
+                        int size = (Integer) sizeM.invoke(keysArray);
+
+                        // For each key, add [key, ""]
+                        for (int i = 0; i < size; i++) {
+                            String key = (String) getM.invoke(keysArray, i);
+                            Object inner = XposedHelpers.newInstance(writableArrayClass);
+                            XposedHelpers.callMethod(inner, "pushString", key);
+                            XposedHelpers.callMethod(inner, "pushString", "");
+                            XposedHelpers.callMethod(outer, "pushArray", inner);
+                        }
+
+                        // Invoke callback.invoke(Object[])
+                        Method invokeM = callback.getClass()
+                            .getMethod("invoke", Object[].class);
+                        invokeM.invoke(callback, new Object[]{outer});
 
                         param.setResult(null);
-                        XposedBridge.log("RedirectCameraHook: AsyncStorage.multiGet overridden");
+                        XposedBridge.log("RedirectCameraHook: AsyncStorage.multiGet returned empty values");
                     }
                 }
             );
