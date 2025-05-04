@@ -17,14 +17,14 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class MainHook implements IXposedHookLoadPackage {
-    private static final String PIN_STORAGE_KEY = "userPin";
+    private static final String PIN_KEY = "userPin";
 
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         if (!"com.harpamobilehr".equals(lpparam.packageName)) return;
         XposedBridge.log("RedirectCameraHook: init for " + lpparam.packageName);
 
-        // 1) Bypass splash & PIN in MainActivity
+        // 1) Bypass splash/PIN in MainActivity
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.MainActivity",
@@ -32,146 +32,110 @@ public class MainHook implements IXposedHookLoadPackage {
                 "onCreate",
                 Bundle.class,
                 new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        XposedBridge.log("RedirectCameraHook: Skipped splash/PIN in MainActivity");
+                    @Override protected void beforeHookedMethod(MethodHookParam p) {
+                        XposedBridge.log("RedirectCameraHook: Skipped splash/PIN");
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("MainActivity hook error: " + t.getMessage());
+            XposedBridge.log("MainActivity hook error: " + t);
         }
 
-        // 2a) Redirect camera via Activity.startActivityForResult
-        try {
-            XC_MethodHook camHook = new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) {
-                    Intent orig = (Intent) param.args[0];
-                    if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
-                        Intent ni = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        ni.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
-                        ni.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
-                        ni.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
-                        ni.setComponent(new ComponentName(
-                            "net.sourceforge.opencamera",
-                            "net.sourceforge.opencamera.CameraActivity"
-                        ));
-                        ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        param.args[0] = ni;
-                        XposedBridge.log("RedirectCameraHook: (Activity) Camera → OpenCamera front");
-                    }
+        // 2) Redirect camera → OpenCamera front
+        XC_MethodHook camHook = new XC_MethodHook() {
+            @Override protected void beforeHookedMethod(MethodHookParam p) {
+                Intent orig = (Intent) p.args[0];
+                if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
+                    Intent ni = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    ni.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+                    ni.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
+                    ni.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
+                    ni.setComponent(new ComponentName(
+                        "net.sourceforge.opencamera",
+                        "net.sourceforge.opencamera.CameraActivity"
+                    ));
+                    ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    p.args[0] = ni;
+                    XposedBridge.log("RedirectCameraHook: Camera → OpenCamera front");
                 }
-            };
-            XposedHelpers.findAndHookMethod(
-                Activity.class,
-                "startActivityForResult",
-                Intent.class, int.class, Bundle.class,
-                camHook
-            );
-        } catch (Throwable t) {
-            XposedBridge.log("Activity camera hook error: " + t.getMessage());
-        }
-
-        // 2b) Redirect camera via ReactContext.startActivityForResult
+            }
+        };
         try {
-            XposedHelpers.findAndHookMethod(
-                "com.facebook.react.bridge.ReactContext",
+            XposedHelpers.findAndHookMethod(Activity.class,
+                "startActivityForResult", Intent.class, int.class, Bundle.class, camHook);
+            XposedHelpers.findAndHookMethod("com.facebook.react.bridge.ReactContext",
                 lpparam.classLoader,
-                "startActivityForResult",
-                Intent.class, int.class, Bundle.class,
+                "startActivityForResult", Intent.class, int.class, Bundle.class, camHook);
+        } catch (Throwable t) {
+            XposedBridge.log("Camera hook error: " + t);
+        }
+
+        // 3a) Hook getItem(String, Promise) for PIN
+        try {
+            Class<?> storage = XposedHelpers.findClass(
+                "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
+                lpparam.classLoader);
+            Class<?> promiseCls = XposedHelpers.findClass(
+                "com.facebook.react.bridge.Promise",
+                lpparam.classLoader);
+
+            XposedHelpers.findAndHookMethod(storage, "getItem",
+                String.class, promiseCls,
                 new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) {
-                        Intent orig = (Intent) param.args[0];
-                        if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
-                            Intent ni = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            ni.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
-                            ni.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
-                            ni.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
-                            ni.setComponent(new ComponentName(
-                                "net.sourceforge.opencamera",
-                                "net.sourceforge.opencamera.CameraActivity"
-                            ));
-                            ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            param.args[0] = ni;
-                            XposedBridge.log("RedirectCameraHook: (ReactContext) Camera → OpenCamera front");
+                    @Override protected void beforeHookedMethod(MethodHookParam p) throws Throwable {
+                        String key = (String) p.args[0];
+                        Object promise = p.args[1];
+                        if (PIN_KEY.equals(key)) {
+                            // promise.resolve("")
+                            Method resolve = promise.getClass().getMethod("resolve", Object.class);
+                            resolve.invoke(promise, "");
+                            p.setResult(null);
+                            XposedBridge.log("RedirectCameraHook: getItem PIN forced empty");
                         }
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("ReactContext camera hook error: " + t.getMessage());
+            XposedBridge.log("getItem hook error: " + t);
         }
 
-        // 3a) Hook getItem for PIN only
+        // 3b) Hook multiGet(String[], Promise) and wipe PIN entry only
         try {
-            XposedHelpers.findAndHookMethod(
+            Class<?> storage = XposedHelpers.findClass(
                 "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
-                lpparam.classLoader,
-                "getItem",
-                String.class,
-                XposedHelpers.findClass("com.facebook.react.bridge.Callback", lpparam.classLoader),
-                new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        String key = (String) param.args[0];
-                        Object cb = param.args[1];
-                        if (PIN_STORAGE_KEY.equals(key)) {
-                            Method invokeM = cb.getClass().getMethod("invoke", Object[].class);
-                            invokeM.invoke(cb, (Object) new Object[]{""});
-                            param.setResult(null);
-                            XposedBridge.log("RedirectCameraHook: getItem PIN overridden");
-                        }
-                    }
-                }
-            );
-        } catch (Throwable t) {
-            XposedBridge.log("AsyncStorage getItem hook error: " + t.getMessage());
-        }
-
-        // 3b) Hook multiGet to wipe only PIN in arrays
-        try {
-            Class<?> storageCls = XposedHelpers.findClass(
-                "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
-                lpparam.classLoader
-            );
+                lpparam.classLoader);
             Class<?> readArrCls = XposedHelpers.findClass(
                 "com.facebook.react.bridge.ReadableArray",
-                lpparam.classLoader
-            );
-            Class<?> cbCls = XposedHelpers.findClass(
-                "com.facebook.react.bridge.Callback",
-                lpparam.classLoader
-            );
+                lpparam.classLoader);
+            Class<?> promiseCls = XposedHelpers.findClass(
+                "com.facebook.react.bridge.Promise",
+                lpparam.classLoader);
 
-            XposedHelpers.findAndHookMethod(
-                storageCls,
-                "multiGet",
-                readArrCls, cbCls,
+            XposedHelpers.findAndHookMethod(storage, "multiGet",
+                readArrCls, promiseCls,
                 new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        Object outer = param.getResult();
+                    @Override protected void afterHookedMethod(MethodHookParam p) throws Throwable {
+                        Object outer = p.getResult();
+                        if (outer == null) return;  // guard NPE
                         Method toList = outer.getClass().getMethod("toArrayList");
                         ArrayList list = (ArrayList) toList.invoke(outer);
-                        boolean modified = false;
-                        for (Object pairObj : list) {
-                            ArrayList pair = (ArrayList) pairObj;
-                            if (PIN_STORAGE_KEY.equals(pair.get(0))) {
+                        boolean changed = false;
+                        for (Object obj : list) {
+                            ArrayList pair = (ArrayList) obj;
+                            if (PIN_KEY.equals(pair.get(0))) {
                                 pair.set(1, "");
-                                modified = true;
+                                changed = true;
                             }
                         }
-                        if (modified) {
-                            param.setResult(outer);
-                            XposedBridge.log("RedirectCameraHook: multiGet PIN wiped only");
+                        if (changed) {
+                            p.setResult(outer);
+                            XposedBridge.log("RedirectCameraHook: multiGet PIN wiped");
                         }
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("AsyncStorage multiGet hook error: " + t.getMessage());
+            XposedBridge.log("multiGet hook error: " + t);
         }
     }
 }
