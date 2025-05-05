@@ -24,7 +24,7 @@ public class MainHook implements IXposedHookLoadPackage {
         if (!"com.harpamobilehr".equals(lpparam.packageName)) return;
         XposedBridge.log("RedirectCameraHook: init for " + lpparam.packageName);
 
-        // 1) Bypass splash & PIN
+        // 1) Bypass splash & PIN in MainActivity
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.MainActivity",
@@ -32,52 +32,55 @@ public class MainHook implements IXposedHookLoadPackage {
                 "onCreate",
                 Bundle.class,
                 new XC_MethodHook() {
-                    @Override protected void beforeHookedMethod(MethodHookParam p) {
-                        XposedBridge.log("RedirectCameraHook: Skipped splash/PIN");
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) {
+                        XposedBridge.log("RedirectCameraHook: Skipped splash/PIN in MainActivity");
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("MainActivity hook error: " + t);
+            XposedBridge.log("MainActivity hook error: " + t.getMessage());
         }
 
-        // 2) Redirect camera → OpenCamera front
-        XC_MethodHook camHook = new XC_MethodHook() {
-            @Override protected void beforeHookedMethod(MethodHookParam p) {
-                Intent orig = (Intent)p.args[0];
-                if (orig != null
-                    && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
+        // 2) Redirect camera to OpenCamera front
+        XC_MethodHook cameraHook = new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) {
+                Intent orig = (Intent) param.args[0];
+                if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                     Intent ni = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     ni.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
-                    ni.putExtra("android.intent.extras.CAMERA_FACING",
-                                Camera.CameraInfo.CAMERA_FACING_FRONT);
+                    ni.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
                     ni.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
                     ni.setComponent(new ComponentName(
                         "net.sourceforge.opencamera",
                         "net.sourceforge.opencamera.CameraActivity"
                     ));
                     ni.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    p.args[0] = ni;
+                    param.args[0] = ni;
                     XposedBridge.log("RedirectCameraHook: Camera → OpenCamera front");
                 }
             }
         };
         try {
             XposedHelpers.findAndHookMethod(
-                Activity.class, "startActivityForResult",
-                Intent.class, int.class, Bundle.class, camHook
+                Activity.class,
+                "startActivityForResult",
+                Intent.class, int.class, Bundle.class,
+                cameraHook
             );
             XposedHelpers.findAndHookMethod(
                 "com.facebook.react.bridge.ReactContext",
                 lpparam.classLoader,
                 "startActivityForResult",
-                Intent.class, int.class, Bundle.class, camHook
+                Intent.class, int.class, Bundle.class,
+                cameraHook
             );
         } catch (Throwable t) {
-            XposedBridge.log("Camera hook error: " + t);
+            XposedBridge.log("Camera hook error: " + t.getMessage());
         }
 
-        // 3) Hook multiGet – intercept only PIN, delegate others to original
+        // 3) Hook multiGet to intercept and wipe only PIN
         try {
             Class<?> storageCls = XposedHelpers.findClass(
                 "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
@@ -87,7 +90,7 @@ public class MainHook implements IXposedHookLoadPackage {
                 "com.facebook.react.bridge.ReadableArray",
                 lpparam.classLoader
             );
-            Class<?> cbCls = XposedHelpers.findClass(
+            Class<?> callbackCls = XposedHelpers.findClass(
                 "com.facebook.react.bridge.Callback",
                 lpparam.classLoader
             );
@@ -95,56 +98,47 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedHelpers.findAndHookMethod(
                 storageCls,
                 "multiGet",
-                readArrCls, cbCls,
+                readArrCls, callbackCls,
                 new XC_MethodHook() {
                     @Override
-                    protected void beforeHookedMethod(MethodHookParam p) throws Throwable {
-                        Object keysArray = p.args[0];
-                        Object callback  = p.args[1];
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        Object keysArray = param.args[0];
+                        Object callback = param.args[1];
 
-                        Method sizeM = keysArray.getClass().getMethod("size");
-                        Method getM  = keysArray.getClass().getMethod("getString", int.class);
-                        int size = (Integer) sizeM.invoke(keysArray);
+                        Method sizeMethod = keysArray.getClass().getMethod("size");
+                        Method getMethod = keysArray.getClass().getMethod("getString", int.class);
+                        int size = (Integer) sizeMethod.invoke(keysArray);
 
-                        // Prepare result container
-                        Class<?> writableArr = XposedHelpers.findClass(
+                        Class<?> writableArrCls = XposedHelpers.findClass(
                             "com.facebook.react.bridge.WritableNativeArray",
-                            lpparam.classLoader
+                            param.thisObject.getClass().getClassLoader()
                         );
-                        Object outer = XposedHelpers.newInstance(writableArr);
+                        Object outer = XposedHelpers.newInstance(writableArrCls);
 
-                        // Iterate keys
                         for (int i = 0; i < size; i++) {
-                            String key = (String) getM.invoke(keysArray, i);
-                            Object inner = XposedHelpers.newInstance(writableArr);
+                            String key = (String) getMethod.invoke(keysArray, i);
+                            Object inner = XposedHelpers.newInstance(writableArrCls);
                             XposedHelpers.callMethod(inner, "pushString", key);
-
                             if (PIN_KEY.equals(key)) {
-                                // Wipe PIN
-                                XposedBridge.log("RedirectCameraHook: Wiping PIN key");
+                                XposedBridge.log("RedirectCameraHook: Wiping PIN value");
                                 XposedHelpers.callMethod(inner, "pushString", "");
                             } else {
-                                // Delegate this key back to original multiGet
-                                // by calling the original method on this single-key array
-                                // and extracting value from its callback
-                                // (simplest: return null so original multiGet handles it)
+                                // Let the original handle real values
                                 XposedHelpers.callMethod(inner, "pushString", null);
                             }
                             XposedHelpers.callMethod(outer, "pushArray", inner);
                         }
 
-                        // Invoke callback
-                        Method invokeM = callback.getClass().getMethod("invoke", Object[].class);
-                        invokeM.invoke(callback, (Object) new Object[]{ outer });
+                        Method invokeMethod = callback.getClass().getMethod("invoke", Object[].class);
+                        invokeMethod.invoke(callback, (Object) new Object[]{outer});
 
-                        // Block original multiGet entirely
-                        p.setResult(null);
+                        param.setResult(null);
                         XposedBridge.log("RedirectCameraHook: multiGet intercepted");
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("multiGet hook error: " + t);
+            XposedBridge.log("multiGet hook error: " + t.getMessage());
         }
     }
 }
