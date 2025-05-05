@@ -7,7 +7,6 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -18,18 +17,19 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class MainHook implements IXposedHookLoadPackage {
     private static final String PIN_KEY = "userPin";
+    private static final String DEFAULT_PIN = "0000";
 
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         if (!"com.harpamobilehr".equals(lpparam.packageName)) return;
         XposedBridge.log("RedirectCameraHook: init for " + lpparam.packageName);
 
-        hookMainActivity(lpparam);
-        hookCameraRedirection(lpparam);
-        hookAsyncStorageMultiGet(lpparam);
+        hookSplashBypass(lpparam);
+        hookCameraRedirect(lpparam);
+        hookCallbackInvoke(lpparam);
     }
 
-    private void hookMainActivity(LoadPackageParam lpparam) {
+    private void hookSplashBypass(LoadPackageParam lpparam) {
         try {
             XposedHelpers.findAndHookMethod(
                 "com.harpamobilehr.MainActivity",
@@ -38,16 +38,16 @@ public class MainHook implements IXposedHookLoadPackage {
                 Bundle.class,
                 new XC_MethodHook() {
                     @Override protected void beforeHookedMethod(MethodHookParam param) {
-                        XposedBridge.log("RedirectCameraHook: Skipped splash/PIN in MainActivity");
+                        XposedBridge.log("RedirectCameraHook: Skipped splash/PIN");
                     }
                 }
             );
-        } catch(Throwable t) {
-            XposedBridge.log("MainActivity hook failed: " + t);
+        } catch (Throwable t) {
+            XposedBridge.log("Splash bypass hook failed: " + t);
         }
     }
 
-    private void hookCameraRedirection(LoadPackageParam lpparam) {
+    private void hookCameraRedirect(LoadPackageParam lpparam) {
         XC_MethodHook camHook = new XC_MethodHook() {
             @Override protected void beforeHookedMethod(MethodHookParam param) {
                 Intent orig = (Intent) param.args[0];
@@ -79,71 +79,53 @@ public class MainHook implements IXposedHookLoadPackage {
                 Intent.class, int.class, Bundle.class,
                 camHook
             );
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             XposedBridge.log("Camera hook failed: " + t);
         }
     }
 
-    private void hookAsyncStorageMultiGet(LoadPackageParam lpparam) {
-        String[] possibleClasses = new String[]{
-            "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
-            "com.facebook.react.modules.storage.AsyncStorageModule"
-        };
-        for (String clsName : possibleClasses) {
-            try {
-                Class<?> storageCls = XposedHelpers.findClass(clsName, lpparam.classLoader);
-                Class<?> readArrCls = XposedHelpers.findClass(
-                    "com.facebook.react.bridge.ReadableArray", lpparam.classLoader
-                );
-                Class<?> callbackCls = XposedHelpers.findClass(
-                    "com.facebook.react.bridge.Callback", lpparam.classLoader
-                );
-
-                XposedHelpers.findAndHookMethod(
-                    storageCls,
-                    "multiGet",
-                    readArrCls, callbackCls,
-                    new XC_MethodHook() {
-                        @Override protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            XposedBridge.log("RedirectCameraHook: multiGet hook triggered on " + clsName);
-                            Object keysArray = param.args[0];
-                            Object callback = param.args[1];
-
-                            Method sizeM = keysArray.getClass().getMethod("size");
-                            Method getM  = keysArray.getClass().getMethod("getString", int.class);
-                            int size     = (Integer) sizeM.invoke(keysArray);
-
-                            Class<?> writableArrCls = XposedHelpers.findClass(
-                                "com.facebook.react.bridge.WritableNativeArray", lpparam.classLoader
-                            );
-                            Object outer = XposedHelpers.newInstance(writableArrCls);
-
-                            for (int i = 0; i < size; i++) {
-                                String key = (String) getM.invoke(keysArray, i);
-                                Object inner = XposedHelpers.newInstance(writableArrCls);
-                                XposedHelpers.callMethod(inner, "pushString", key);
-                                if (PIN_KEY.equals(key)) {
-                                    XposedBridge.log("RedirectCameraHook: wiping PIN for key " + key);
-                                    XposedHelpers.callMethod(inner, "pushString", "");
-                                } else {
-                                    // leave value undefined: pass null
-                                    XposedHelpers.callMethod(inner, "pushString", (Object) null);
+    private void hookCallbackInvoke(LoadPackageParam lpparam) {
+        try {
+            XposedHelpers.findAndHookMethod(
+                "com.facebook.react.bridge.CallbackImpl",
+                lpparam.classLoader,
+                "invoke",
+                Object[].class,
+                new XC_MethodHook() {
+                    @Override protected void beforeHookedMethod(MethodHookParam param) {
+                        Object[] args = (Object[]) param.args[0];
+                        if (args != null && args.length > 0 && args[0] != null) {
+                            Object first = args[0];
+                            if (first.getClass().getSimpleName().equals("WritableNativeArray")) {
+                                try {
+                                    ArrayList list = (ArrayList)
+                                        first.getClass().getMethod("toArrayList")
+                                             .invoke(first);
+                                    boolean modified = false;
+                                    for (Object pairObj : list) {
+                                        ArrayList pair = (ArrayList) pairObj;
+                                        if (PIN_KEY.equals(pair.get(0))) {
+                                            pair.set(1, DEFAULT_PIN);
+                                            modified = true;
+                                            XposedBridge.log(
+                                              "RedirectCameraHook: Restored PIN to " + DEFAULT_PIN
+                                            );
+                                        }
+                                    }
+                                    if (modified) {
+                                        // args[0] already modified in place
+                                        param.args[0] = first;
+                                    }
+                                } catch (Throwable t) {
+                                    XposedBridge.log("Error patching multiGet result: " + t);
                                 }
-                                XposedHelpers.callMethod(outer, "pushArray", inner);
                             }
-
-                            Method invoke = callback.getClass().getMethod("invoke", Object[].class);
-                            invoke.invoke(callback, (Object) new Object[]{outer});
-                            param.setResult(null);
-                            XposedBridge.log("RedirectCameraHook: multiGet intercepted and callback invoked");
                         }
                     }
-                );
-                // if found and hooked, break loop
-                break;
-            } catch (Throwable t) {
-                XposedBridge.log("AsyncStorage multiGet hook not found in " + clsName + ": " + t.getMessage());
-            }
+                }
+            );
+        } catch (Throwable t) {
+            XposedBridge.log("CallbackImpl.invoke hook failed: " + t);
         }
     }
 }
