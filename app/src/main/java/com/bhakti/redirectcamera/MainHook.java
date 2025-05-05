@@ -41,10 +41,10 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("MainActivity hook error: " + t);
         }
 
-        // 2) Redirect camera → OpenCamera front
+        // 2) Redirect camera to OpenCamera front
         XC_MethodHook camHook = new XC_MethodHook() {
             @Override protected void beforeHookedMethod(MethodHookParam p) {
-                Intent orig = (Intent) p.args[0];
+                Intent orig = (Intent)p.args[0];
                 if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                     Intent ni = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     ni.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
@@ -61,36 +61,45 @@ public class MainHook implements IXposedHookLoadPackage {
             }
         };
         try {
-            XposedHelpers.findAndHookMethod(Activity.class,
-                "startActivityForResult", Intent.class, int.class, Bundle.class, camHook);
-            XposedHelpers.findAndHookMethod("com.facebook.react.bridge.ReactContext",
+            // Hook both Activity and ReactContext entry-points
+            XposedHelpers.findAndHookMethod(
+                Activity.class, "startActivityForResult",
+                Intent.class, int.class, Bundle.class, camHook
+            );
+            XposedHelpers.findAndHookMethod(
+                "com.facebook.react.bridge.ReactContext",
                 lpparam.classLoader,
-                "startActivityForResult", Intent.class, int.class, Bundle.class, camHook);
+                "startActivityForResult",
+                Intent.class, int.class, Bundle.class, camHook
+            );
         } catch (Throwable t) {
             XposedBridge.log("Camera hook error: " + t);
         }
 
-        // 3a) Hook getItem(String, Promise) for PIN
+        // 3a) Hook getItem(String, Callback) for PIN only
         try {
             Class<?> storage = XposedHelpers.findClass(
                 "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
-                lpparam.classLoader);
-            Class<?> promiseCls = XposedHelpers.findClass(
-                "com.facebook.react.bridge.Promise",
-                lpparam.classLoader);
-
-            XposedHelpers.findAndHookMethod(storage, "getItem",
-                String.class, promiseCls,
+                lpparam.classLoader
+            );
+            Class<?> callbackCls = XposedHelpers.findClass(
+                "com.facebook.react.bridge.Callback",
+                lpparam.classLoader
+            );
+            XposedHelpers.findAndHookMethod(
+                storage,
+                "getItem",
+                String.class, callbackCls,
                 new XC_MethodHook() {
                     @Override protected void beforeHookedMethod(MethodHookParam p) throws Throwable {
-                        String key = (String) p.args[0];
-                        Object promise = p.args[1];
+                        String key = (String)p.args[0];
+                        Object cb = p.args[1];
                         if (PIN_KEY.equals(key)) {
-                            // promise.resolve("")
-                            Method resolve = promise.getClass().getMethod("resolve", Object.class);
-                            resolve.invoke(promise, "");
+                            // callback.invoke("" /* value */, null /* error */)
+                            Method invoke = cb.getClass().getMethod("invoke", Object[].class);
+                            invoke.invoke(cb, (Object)new Object[]{ "", null });
                             p.setResult(null);
-                            XposedBridge.log("RedirectCameraHook: getItem PIN forced empty");
+                            XposedBridge.log("RedirectCameraHook: getItem PIN overridden");
                         }
                     }
                 }
@@ -99,36 +108,40 @@ public class MainHook implements IXposedHookLoadPackage {
             XposedBridge.log("getItem hook error: " + t);
         }
 
-        // 3b) Hook multiGet(String[], Promise) and wipe PIN entry only
+        // 3b) Hook multiGet(String[], Callback) to wipe only PIN entries
         try {
             Class<?> storage = XposedHelpers.findClass(
                 "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
-                lpparam.classLoader);
+                lpparam.classLoader
+            );
             Class<?> readArrCls = XposedHelpers.findClass(
                 "com.facebook.react.bridge.ReadableArray",
-                lpparam.classLoader);
-            Class<?> promiseCls = XposedHelpers.findClass(
-                "com.facebook.react.bridge.Promise",
-                lpparam.classLoader);
-
-            XposedHelpers.findAndHookMethod(storage, "multiGet",
-                readArrCls, promiseCls,
+                lpparam.classLoader
+            );
+            Class<?> callbackCls = XposedHelpers.findClass(
+                "com.facebook.react.bridge.Callback",
+                lpparam.classLoader
+            );
+            XposedHelpers.findAndHookMethod(
+                storage,
+                "multiGet",
+                readArrCls, callbackCls,
                 new XC_MethodHook() {
                     @Override protected void afterHookedMethod(MethodHookParam p) throws Throwable {
-                        Object outer = p.getResult();
-                        if (outer == null) return;  // guard NPE
-                        Method toList = outer.getClass().getMethod("toArrayList");
-                        ArrayList list = (ArrayList) toList.invoke(outer);
+                        Object result = p.getResult();
+                        if (result == null) return;
+                        Method toList = result.getClass().getMethod("toArrayList");
+                        ArrayList list = (ArrayList)toList.invoke(result);
                         boolean changed = false;
-                        for (Object obj : list) {
-                            ArrayList pair = (ArrayList) obj;
+                        for (Object o : list) {
+                            ArrayList pair = (ArrayList)o;
                             if (PIN_KEY.equals(pair.get(0))) {
                                 pair.set(1, "");
                                 changed = true;
                             }
                         }
                         if (changed) {
-                            p.setResult(outer);
+                            p.setResult(result);
                             XposedBridge.log("RedirectCameraHook: multiGet PIN wiped");
                         }
                     }
