@@ -11,8 +11,8 @@ import android.provider.MediaStore;
 
 import java.util.List;
 
-import com.facebook.react.bridge.Promise;              // <— IMPORT PROMISE
-import com.facebook.react.bridge.ReadableArray;        // untuk multiGet
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableArray;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -47,7 +47,7 @@ public class MainHook implements IXposedHookLoadPackage {
                 lpparam.classLoader,
                 "multiSet",
                 List.class,
-                Promise.class,               // <— signature terbaru
+                Promise.class,
                 new XC_MethodHook() {
                     @SuppressWarnings("unchecked")
                     @Override protected void beforeHookedMethod(MethodHookParam param) {
