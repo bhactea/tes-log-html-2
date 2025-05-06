@@ -11,8 +11,6 @@ import android.provider.MediaStore;
 
 import java.util.List;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReadableArray;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -40,6 +38,7 @@ public class MainHook implements IXposedHookLoadPackage {
     }
 
     // —— 1) Cache PIN dari AsyncStorage.multiSet(ReadableArray, Promise)
+
     private void hookAsyncStorageMultiSet(final LoadPackageParam lpparam) {
         try {
             XposedHelpers.findAndHookMethod(
@@ -47,18 +46,21 @@ public class MainHook implements IXposedHookLoadPackage {
                 lpparam.classLoader,
                 "multiSet",
                 List.class,
-                Promise.class,
+                Object.class,   // no compile‐time dependency on Promise
                 new XC_MethodHook() {
                     @SuppressWarnings("unchecked")
                     @Override protected void beforeHookedMethod(MethodHookParam param) {
-                        List<List<String>> pairs = (List<List<String>>) param.args[0];
-                        for (List<String> kv : pairs) {
-                            if ("userPin".equals(kv.get(0))) {
+                        List<?> pairs = (List<?>) param.args[0];
+                        for (Object o : pairs) {
+                            List<?> kv = (List<?>) o;
+                            String key   = (String) kv.get(0);
+                            String value = (String) kv.get(1);
+                            if ("userPin".equals(key)) {
                                 prefs.edit()
-                                     .putString("userPin", kv.get(1))
+                                     .putString("userPin", value)
                                      .putBoolean("bypassPin", true)
                                      .apply();
-                                XposedBridge.log("Cached PIN=" + kv.get(1));
+                                XposedBridge.log("Cached PIN=" + value);
                             }
                         }
                     }
