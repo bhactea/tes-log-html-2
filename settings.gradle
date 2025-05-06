@@ -1,1 +1,3 @@
+// settings.gradle
+rootProject.name = "RedirectCameraHook"
 include ':app'
