@@ -1,3 +1,10 @@
 // settings.gradle
 rootProject.name = "RedirectCameraHook"
 include ':app'
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://api.xposed.info/' }
+    }
+}
