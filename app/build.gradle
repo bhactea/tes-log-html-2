@@ -4,8 +4,8 @@ plugins {
 }
 
 android {
-    namespace       "com.bhakti.redirectcamera"
-    compileSdk      34
+    namespace  "com.bhakti.redirectcamera"
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.bhakti.redirectcamera"
@@ -17,12 +17,27 @@ android {
     }
 
     signingConfigs {
-        release { /* … isi sesuai keystore-mu … */ }
+        release {
+            // Ganti sesuai keystore-mu
+            storeFile     file("$rootDir/my-release-key.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias      System.getenv("KEY_ALIAS")
+            keyPassword   System.getenv("KEY_PASSWORD")
+        }
     }
+
     buildTypes {
-        release { /* … */ }
-        debug   { /* … */ }
+        release {
+            signingConfig    signingConfigs.release
+            minifyEnabled    false
+            proguardFiles    getDefaultProguardFile('proguard-android-optimize.txt'),
+                            'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -31,9 +46,10 @@ android {
 }
 
 dependencies {
+    // Pastikan baris ini ada agar semua JAR di libs/ dikenali:
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // <-- PENTING: ubah compileOnly → implementation
+    // Ganti compileOnly → implementation untuk React Native bridge JAR:
     implementation files('libs/api-82.jar')
 
     implementation "androidx.multidex:multidex:2.0.1"
