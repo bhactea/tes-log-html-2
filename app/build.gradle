@@ -46,10 +46,13 @@ android {
 }
 
 dependencies {
-    // Pastikan baris ini ada agar semua JAR di libs/ dikenali:
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.multidex:multidex:2.0.1"
+    // Semua JAR di libs, KECUALI api-82.jar, ditangani di bawah
+    implementation fileTree(dir: 'libs', include: ['*.jar'], exclude: ['api-82.jar'])
+
+    // Xposed API hanya untuk compile-time, TIDAK DIBUNDEL
+    compileOnly files('libs/api-82.jar')
+
     implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "androidx.core:core-ktx:1.13.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+    implementation "androidx.multidex:multidex:2.0.1"
 }
