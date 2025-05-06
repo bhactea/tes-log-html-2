@@ -1,14 +1,12 @@
 package com.bhakti.redirectcamera;
 
 import android.app.Activity;
-import android.app.Instrumentation;
+import android.os.Bundle;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.provider.MediaStore;
 
+import java.util.Arrays;
 import java.util.List;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -19,7 +17,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class MainHook implements IXposedHookLoadPackage {
     private static final String PREFS_NAME = "redirectcamera_cache";
-    private static String cachedPin = null;
 
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
@@ -28,12 +25,27 @@ public class MainHook implements IXposedHookLoadPackage {
         }
         XposedBridge.log("RedirectCameraHook: init for " + lpparam.packageName);
 
-        hookAsyncStorageMultiSet(lpparam);
-        hookMainActivityOnCreate(lpparam);
-        hookCameraRedirect(lpparam);
+        // 1) Cache setup values when first saved
+        hookAsyncStorageSave(lpparam);
+        // 2) Reload cache into AsyncStorage before UI
+        hookAsyncStorageReload(lpparam);
+        // 3) Bypass splash screen
+        hookSplashBypass(lpparam);
+        // 4) Bypass PIN screen
+        hookPinBypass(lpparam);
+        // 5) Camera redirect already working
     }
 
-    private void hookAsyncStorageMultiSet(final LoadPackageParam lpparam) {
+    // Helper to get SharedPreferences
+    private SharedPreferences getGlobalPrefs() {
+        Context app = (Context) XposedHelpers.callStaticMethod(
+            XposedHelpers.findClass("android.app.ActivityThread", null),
+            "currentApplication"
+        );
+        return app.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    }
+
+    private void hookAsyncStorageSave(final LoadPackageParam lpparam) {
         try {
             XposedHelpers.findAndHookMethod(
                 "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
@@ -43,125 +55,116 @@ public class MainHook implements IXposedHookLoadPackage {
                 Object.class,
                 new XC_MethodHook() {
                     @SuppressWarnings("unchecked")
-                    @Override protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    @Override protected void beforeHookedMethod(MethodHookParam param) {
                         List<?> pairs = (List<?>) param.args[0];
+                        SharedPreferences prefs = getGlobalPrefs();
                         for (Object o : pairs) {
                             List<?> kv = (List<?>) o;
                             String key = (String) kv.get(0);
                             String value = (String) kv.get(1);
-                            if ("userPin".equals(key)) {
-                                cachedPin = value;
-                                XposedBridge.log("Cached PIN=" + value);
+                            if (Arrays.asList("domain", "port", "userId", "userPin").contains(key)) {
+                                prefs.edit().putString(key, value).apply();
+                                XposedBridge.log("Cached " + key + "=" + value);
                             }
                         }
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("AsyncStorage.multiSet hook failed: " + t);
+            XposedBridge.log("hookAsyncStorageSave error: " + t);
         }
     }
 
-    private void hookMainActivityOnCreate(final LoadPackageParam lpparam) {
+    private void hookAsyncStorageReload(final LoadPackageParam lpparam) {
         try {
             XposedHelpers.findAndHookMethod(
-                "com.harpamobilehr.MainActivity",
+                "com.harpamobilehr.ui.SplashActivity",
                 lpparam.classLoader,
                 "onCreate",
                 Bundle.class,
                 new XC_MethodHook() {
-                    @Override protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        Activity act = (Activity) param.thisObject;
-                        SharedPreferences prefs = act.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-
-                        // Store cached PIN into prefs
-                        if (cachedPin != null) {
-                            prefs.edit()
-                                 .putString("userPin", cachedPin)
-                                 .putBoolean("bypassPin", true)
-                                 .apply();
-                            cachedPin = null;
-                        }
-
-                        // Bypass PIN
-                        if (prefs.getBoolean("bypassPin", false)) {
-                            XposedBridge.log("Bypassing PIN screen");
-                            try {
-                                Class<?> homeCls = XposedHelpers.findClass(
-                                    "com.harpamobilehr.ui.HomeActivity",
-                                    lpparam.classLoader
-                                );
-                                act.startActivity(new Intent(act, homeCls));
-                                act.finish();
-                            } catch (Throwable t) {
-                                XposedBridge.log("Error launching HomeActivity: " + t);
-                            }
+                    @Override protected void beforeHookedMethod(MethodHookParam param) {
+                        SharedPreferences prefs = getGlobalPrefs();
+                        String domain = prefs.getString("domain", null);
+                        String port   = prefs.getString("port",   null);
+                        String userId = prefs.getString("userId", null);
+                        String pin    = prefs.getString("userPin",null);
+                        if (domain != null && port != null && userId != null && pin != null) {
+                            Class<?> asmCls = XposedHelpers.findClass(
+                                "com.reactnativecommunity.asyncstorage.AsyncStorageModule",
+                                lpparam.classLoader
+                            );
+                            // invoke multiSet(List<List<String>>, Promise)
+                            List<List<String>> data = Arrays.asList(
+                                Arrays.asList("domain", domain),
+                                Arrays.asList("port",   port),
+                                Arrays.asList("userId", userId),
+                                Arrays.asList("userPin",pin)
+                            );
+                            XposedHelpers.callStaticMethod(
+                                asmCls,
+                                "multiSet",
+                                data,
+                                null
+                            );
+                            XposedBridge.log("Reloaded AsyncStorage from cache");
                         }
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("MainActivity.onCreate hook failed: " + t);
+            XposedBridge.log("hookAsyncStorageReload error: " + t);
         }
     }
 
-    private void hookCameraRedirect(final LoadPackageParam lpparam) {
-        XC_MethodHook camHook = new XC_MethodHook() {
-            @Override protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Intent orig;
-                String methodName = param.method.getName();
-                if ("startActivityForResult".equals(methodName)) {
-                    orig = (Intent) param.args[0];
-                    if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
-                        XposedBridge.log("Redirect to OpenCamera front via startActivityForResult");
-                        Intent ni = new Intent(orig);
-                        ni.setPackage("net.sourceforge.opencamera");
-                        ni.putExtra("android.intent.extras.CAMERA_FACING", 1);
-                        param.args[0] = ni;
-                    }
-                }
-                // execStartActivity handled below
-            }
-        };
-
-        try {
-            Class<?> activityClass = XposedHelpers.findClass("android.app.Activity", lpparam.classLoader);
-            XposedHelpers.findAndHookMethod(
-                activityClass,
-                "startActivityForResult",
-                Intent.class, int.class, camHook
-            );
-            XposedHelpers.findAndHookMethod(
-                activityClass,
-                "startActivityForResult",
-                Intent.class, int.class, Bundle.class, camHook
-            );
-        } catch (Throwable t) {
-            XposedBridge.log("Hook startActivityForResult failed: " + t);
-        }
-
+    private void hookSplashBypass(final LoadPackageParam lpparam) {
         try {
             XposedHelpers.findAndHookMethod(
-                "android.app.Instrumentation",
+                "com.harpamobilehr.ui.SplashActivity",
                 lpparam.classLoader,
-                "execStartActivity",
-                Context.class, IBinder.class, IBinder.class,
-                Activity.class, Intent.class, int.class, Bundle.class,
+                "onCreate",
+                Bundle.class,
                 new XC_MethodHook() {
-                    @Override protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        Intent orig = (Intent) param.args[4];
-                        if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
-                            XposedBridge.log("Redirect to OpenCamera front via execStartActivity");
-                            Intent ni = new Intent(orig);
-                            ni.setPackage("net.sourceforge.opencamera");
-                            ni.putExtra("android.intent.extras.CAMERA_FACING", 1);
-                            param.args[4] = ni;
+                    @Override protected void afterHookedMethod(MethodHookParam param) {
+                        Activity splash = (Activity) param.thisObject;
+                        try {
+                            Class<?> mainCls = XposedHelpers.findClass(
+                                "com.harpamobilehr.ui.MainActivity",
+                                lpparam.classLoader
+                            );
+                            Intent i = new Intent(splash, mainCls);
+                            splash.startActivity(i);
+                            splash.finish();
+                            XposedBridge.log("Splash bypassed");
+                        } catch (Throwable t) {
+                            XposedBridge.log("Splash hook error: " + t);
                         }
                     }
                 }
             );
         } catch (Throwable t) {
-            XposedBridge.log("Hook execStartActivity failed: " + t);
+            XposedBridge.log("hookSplashBypass error: " + t);
+        }
+    }
+
+    private void hookPinBypass(final LoadPackageParam lpparam) {
+        String pinCls = "com.harpamobilehr.security.PinActivity";
+        try {
+            XposedHelpers.findAndHookMethod(
+                pinCls,
+                lpparam.classLoader,
+                "onCreate",
+                Bundle.class,
+                new XC_MethodHook() {
+                    @Override protected void afterHookedMethod(MethodHookParam param) {
+                        Activity pin = (Activity) param.thisObject;
+                        pin.finish();
+                        XposedBridge.log("PinActivity auto-finished");
+                    }
+                }
+            );
+        } catch (Throwable t) {
+            XposedBridge.log("hookPinBypass error: " + t);
         }
     }
 }
