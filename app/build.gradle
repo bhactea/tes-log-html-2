@@ -3,60 +3,32 @@ plugins {
 }
 
 android {
-    namespace "com.bhakti.redirectcamera"
+    namespace 'com.bhakti.redirectcamera'
     compileSdk 34
 
-    signingConfigs {
-        release {
-            storeFile file("$rootDir/my-release-key.jks")
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
-        }
-    }
-
     defaultConfig {
-        applicationId "com.bhakti.redirectcamera"
         minSdk 21
         targetSdk 34
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
     }
-
     buildTypes {
         release {
-            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+}
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+repositories {
+    google()
+    mavenCentral()
+    maven { url("$rootDir/node_modules/react-native/android") }
 }
 
 dependencies {
-    // Xposed API: compileOnly so it's not bundled in the APK
-    compileOnly files('libs/api-82.jar')
-
-    // React Native bridge interfaces (so Callback, ReadableArray, etc. compile)
+    // Xposed API
+    compileOnly files("libs/xposed-api.jar")
+    // React Native Bridge
     compileOnly "com.facebook.react:react-native:+"
-
-    // Other AndroidX dependencies
-    implementation "androidx.multidex:multidex:2.0.1"
-    implementation "androidx.appcompat:appcompat:1.7.0"
-    implementation "androidx.core:core-ktx:1.13.0"
-}
-
-// Force Kotlin stdlib uniformity
-configurations.all {
-    resolutionStrategy.eachDependency { details ->
-        if (details.requested.group == 'org.jetbrains.kotlin') {
-            details.useVersion "1.8.22"
-            details.because "Avoid duplicate Kotlin stdlib classes"
-        }
-    }
 }
