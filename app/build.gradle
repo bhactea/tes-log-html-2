@@ -1,34 +1,42 @@
+// app/build.gradle
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'  // hapus baris ini jika tidak pakai Kotlin
 }
 
 android {
-    namespace "com.bhakti.redirectcamera"
-    compileSdkVersion 34
-
-    signingConfigs {
-        release {
-            storeFile file("$rootDir/my-release-key.jks")
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
-        }
-    }
+    namespace       "com.bhakti.redirectcamera"
+    compileSdk      34
 
     defaultConfig {
         applicationId "com.bhakti.redirectcamera"
-        minSdkVersion 21
-        targetSdkVersion 34
-        versionCode 1
-        versionName "1.0"
+        minSdk        21
+        targetSdk     34
+        versionCode   1
+        versionName   "1.0"
         multiDexEnabled true
+    }
+
+    signingConfigs {
+        release {
+            // Ganti path dan credential berikut sesuai keystore-mu
+            storeFile  file("$rootDir/my-release-key.jks")
+            storePassword  System.getenv("KEYSTORE_PASSWORD")
+            keyAlias      System.getenv("KEY_ALIAS")
+            keyPassword   System.getenv("KEY_PASSWORD")
+        }
     }
 
     buildTypes {
         release {
+            signingConfig   signingConfigs.release
+            minifyEnabled   false
+            proguardFiles   getDefaultProguardFile('proguard-android-optimize.txt'),
+                            'proguard-rules.pro'
+        }
+        debug {
+            // Untuk debug biasanya tidak perlu sign
             signingConfig signingConfigs.release
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -36,29 +44,20 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {  // hapus block ini jika tidak pakai Kotlin
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    // Untuk kompilasi React Native bridge API (AsyncStorage, Callback, dll.)
-    // Hanya untuk compile-time, agar Xposed API tidak disertakan di APK
-    compileOnly files('libs/api-82.jar')
 
-    // Library utama
+    // Untuk kompilasi React Native bridge API (AsyncStorage, Callback, dll.)
+    compileOnly files('libs/api-82.jar')
+    // Jika ingin turut menyertakan di runtime, ganti compileOnly → implementation
+
     implementation "androidx.multidex:multidex:2.0.1"
     implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "androidx.core:core-ktx:1.13.0"
-
-    // Kotlin stdlib jika dibutuhkan
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
-}
-
-// Memaksa semua dependensi Kotlin ke versi tunggal untuk menghindari duplikat
-configurations.all {
-    resolutionStrategy.eachDependency { details ->
-        if (details.requested.group == 'org.jetbrains.kotlin') {
-            details.useVersion "1.8.22"
-            details.because "Memastikan versi Kotlin seragam untuk menghindari duplicate classes"
-        }
-    }
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"  // optional
 }
