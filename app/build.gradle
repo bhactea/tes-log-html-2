@@ -1,40 +1,34 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'  // hapus jika tidak pakai Kotlin
 }
 
 android {
-    namespace  "com.bhakti.redirectcamera"
+    namespace "com.bhakti.redirectcamera"
     compileSdk 34
-
-    defaultConfig {
-        applicationId "com.bhakti.redirectcamera"
-        minSdk        21
-        targetSdk     34
-        versionCode   1
-        versionName   "1.0"
-        multiDexEnabled true
-    }
 
     signingConfigs {
         release {
-            // Ganti sesuai keystore-mu
-            storeFile     file("$rootDir/my-release-key.jks")
+            storeFile file("$rootDir/my-release-key.jks")
             storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias      System.getenv("KEY_ALIAS")
-            keyPassword   System.getenv("KEY_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
         }
+    }
+
+    defaultConfig {
+        applicationId "com.bhakti.redirectcamera"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
     }
 
     buildTypes {
         release {
-            signingConfig    signingConfigs.release
-            minifyEnabled    false
-            proguardFiles    getDefaultProguardFile('proguard-android-optimize.txt'),
-                            'proguard-rules.pro'
-        }
-        debug {
             signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -42,17 +36,27 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions { jvmTarget = "1.8" }  // hapus jika tidak pakai Kotlin
 }
 
 dependencies {
-    // Semua JAR di libs, KECUALI api-82.jar, ditangani di bawah
-    implementation fileTree(dir: 'libs', include: ['*.jar'], exclude: ['api-82.jar'])
+    // Xposed API: compileOnly so it's not bundled in the APK
+    compileOnly files('libs/api-82.jar')
 
-    // Xposed API hanya untuk compile-time, TIDAK DIBUNDEL
-    implementation files('libs/api-82.jar')
-    compileOnly "de.robv.android.xposed:api:82"        // Xposed API
+    // React Native bridge interfaces (so Callback, ReadableArray, etc. compile)
+    compileOnly "com.facebook.react:react-native:+"
+
+    // Other AndroidX dependencies
+    implementation "androidx.multidex:multidex:2.0.1"
     implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "androidx.core:core-ktx:1.13.0"
-    implementation "androidx.multidex:multidex:2.0.1"
+}
+
+// Force Kotlin stdlib uniformity
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'org.jetbrains.kotlin') {
+            details.useVersion "1.8.22"
+            details.because "Avoid duplicate Kotlin stdlib classes"
+        }
+    }
 }
