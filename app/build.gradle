@@ -48,10 +48,6 @@ android {
 dependencies {
     // Pastikan baris ini ada agar semua JAR di libs/ dikenali:
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    // Ganti compileOnly → implementation untuk React Native bridge JAR:
-    implementation files('libs/api-82.jar')
-
     implementation "androidx.multidex:multidex:2.0.1"
     implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "androidx.core:core-ktx:1.13.0"
