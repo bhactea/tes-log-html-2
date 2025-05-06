@@ -50,8 +50,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'], exclude: ['api-82.jar'])
 
     // Xposed API hanya untuk compile-time, TIDAK DIBUNDEL
-    compileOnly files('libs/api-82.jar')
-
+    implementation files('libs/api-82.jar')
+    compileOnly "de.robv.android.xposed:api:82"        // Xposed API
     implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "androidx.core:core-ktx:1.13.0"
     implementation "androidx.multidex:multidex:2.0.1"
