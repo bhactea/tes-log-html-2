@@ -1,7 +1,6 @@
-// app/build.gradle
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'  // hapus baris ini jika tidak pakai Kotlin
+    id 'org.jetbrains.kotlin.android'  // hapus jika tidak pakai Kotlin
 }
 
 android {
@@ -18,46 +17,27 @@ android {
     }
 
     signingConfigs {
-        release {
-            // Ganti path dan credential berikut sesuai keystore-mu
-            storeFile  file("$rootDir/my-release-key.jks")
-            storePassword  System.getenv("KEYSTORE_PASSWORD")
-            keyAlias      System.getenv("KEY_ALIAS")
-            keyPassword   System.getenv("KEY_PASSWORD")
-        }
+        release { /* … isi sesuai keystore-mu … */ }
     }
-
     buildTypes {
-        release {
-            signingConfig   signingConfigs.release
-            minifyEnabled   false
-            proguardFiles   getDefaultProguardFile('proguard-android-optimize.txt'),
-                            'proguard-rules.pro'
-        }
-        debug {
-            // Untuk debug biasanya tidak perlu sign
-            signingConfig signingConfigs.release
-        }
+        release { /* … */ }
+        debug   { /* … */ }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {  // hapus block ini jika tidak pakai Kotlin
-        jvmTarget = "1.8"
-    }
+    kotlinOptions { jvmTarget = "1.8" }  // hapus jika tidak pakai Kotlin
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Untuk kompilasi React Native bridge API (AsyncStorage, Callback, dll.)
-    compileOnly files('libs/api-82.jar')
-    // Jika ingin turut menyertakan di runtime, ganti compileOnly → implementation
+    // <-- PENTING: ubah compileOnly → implementation
+    implementation files('libs/api-82.jar')
 
     implementation "androidx.multidex:multidex:2.0.1"
     implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "androidx.core:core-ktx:1.13.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"  // optional
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
 }
