@@ -1,4 +1,12 @@
 // File: build.gradle (root)
+// build.gradle (root)
+buildscript {
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.4.0"
+    }
+}
+
+// tidak boleh ada `repositories { … }` di sini!
 
 
 
