@@ -1,17 +1,17 @@
 package com.bhakti.redirectcamera;
 
+import android.content.Context;
+import android.content.Intent;          // ← Tambahkan ini
+import android.os.Bundle;
+import android.os.IBinder;
+import android.provider.MediaStore;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XC_MethodHook;
-import android.content.Intent;
-import android.content.Context;
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.Instrumentation;
-import android.os.IBinder;
-import android.provider.MediaStore;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.WritableNativeArray;
@@ -27,7 +27,7 @@ public class MainHook implements IXposedHookLoadPackage {
         // 1) Hook startActivityForResult untuk kamera
         XC_MethodHook cameraHook = new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) {
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 Intent orig = (Intent) param.args[0];
                 if (orig != null && Intent.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                     XposedBridge.log("RedirectCameraHook: intercept CAMERA intent");
