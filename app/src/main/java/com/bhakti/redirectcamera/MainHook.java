@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.WritableNativeArray;
