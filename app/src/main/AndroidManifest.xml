@@ -5,7 +5,7 @@
     <!-- Sesuaikan SDK level dengan build.gradle -->
     <uses-sdk
         android:minSdkVersion="21"
-        android:targetSdkVersion="33"/>
+        android:targetSdkVersion="34"/>
 
     <application>
         <!-- Tandai modul Xposed -->
