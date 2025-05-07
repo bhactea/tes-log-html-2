@@ -39,9 +39,6 @@ android {
 
 
 dependencies {
-    // Stub React Native hanya untuk compile-time:
-    compileOnly "com.facebook.react:react-native:0.71.8"
-
     // Xposed API (jadikan .jar di libs/api-82.jar):
     implementation files("libs/api-82.jar")
 
