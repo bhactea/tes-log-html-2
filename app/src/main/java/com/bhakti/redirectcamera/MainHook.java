@@ -24,33 +24,48 @@ public class MainHook implements IXposedHookLoadPackage {
         if (!lpparam.packageName.equals(TARGET_PKG)) return;
         XposedBridge.log("RedirectCameraHook: init for " + TARGET_PKG);
 
-        // 1) Hook startActivityForResult untuk kamera
+        // 3) Camera hook → open front camera via ACTION_IMAGE_CAPTURE
         XC_MethodHook cameraHook = new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            protected void beforeHookedMethod(MethodHookParam param) {
                 Intent orig = (Intent) param.args[0];
-                if (orig != null && Intent.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
+                if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                     XposedBridge.log("RedirectCameraHook: intercept CAMERA intent");
+                    // pakai ACTION_IMAGE_CAPTURE + setPackage + front camera extra
                     orig.setPackage("net.sourceforge.opencamera");
-                    orig.putExtra("android.intent.extras.CAMERA_FACING", 1);
+                    orig.putExtra("android.intent.extras.CAMERA_FACING", 1);  // front
                     param.args[0] = orig;
                 }
             }
         };
-        Class<?> activityClass = XposedHelpers.findClass("android.app.Activity", lpparam.classLoader);
-        XposedHelpers.findAndHookMethod(activityClass, "startActivityForResult",
-            Intent.class, int.class, cameraHook);
-        XposedHelpers.findAndHookMethod(activityClass, "startActivityForResult",
-            Intent.class, int.class, Bundle.class, cameraHook);
-        XposedHelpers.findAndHookMethod("android.app.Instrumentation", lpparam.classLoader,
-            "execStartActivity",
-            Context.class, IBinder.class, IBinder.class, Activity.class,
+
+        Class<?> activityClass = XposedHelpers.findClass("android.app.Activity", cl);
+        // hook startActivityForResult overloads
+        XposedHelpers.findAndHookMethod(
+            activityClass,
+            "startActivityForResult",
+            Intent.class, int.class,
+            cameraHook
+        );
+        XposedHelpers.findAndHookMethod(
+            activityClass,
+            "startActivityForResult",
             Intent.class, int.class, Bundle.class,
+            cameraHook
+        );
+
+        // hook execStartActivity
+        XposedHelpers.findAndHookMethod(
+            "android.app.Instrumentation",
+            cl,
+            "execStartActivity",
+            Context.class, IBinder.class, IBinder.class,
+            Activity.class, Intent.class, int.class, Bundle.class,
             new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) {
                     Intent orig = (Intent) param.args[4];
-                    if (orig != null && Intent.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
+                    if (orig != null && MediaStore.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
                         XposedBridge.log("RedirectCameraHook: execStartActivity intercept");
                         orig.setPackage("net.sourceforge.opencamera");
                         orig.putExtra("android.intent.extras.CAMERA_FACING", 1);
