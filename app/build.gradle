@@ -37,6 +37,7 @@ android {
 }
 
 repositories {
+    google()
     mavenCentral()
     // untuk AAR stub React Native
     maven { url "https://oss.sonatype.org/content/repositories/releases/" }
