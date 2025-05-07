@@ -1,25 +1,23 @@
 plugins {
     id 'com.android.application'
-    // id 'org.jetbrains.kotlin.android'  // tidak perlu karena murni Java
 }
 
 android {
-    namespace "com.bhakti.redirectcamera"   // -- wajib, sesuai package modul
-    compileSdkVersion 34
+    namespace "com.bhakti.redirectcamera"
+    compileSdk 34
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk 21
+        targetSdk 34
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
     }
 
     signingConfigs {
         release {
             storeFile file("$rootDir/my-release-key.jks")
             storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias   System.getenv("KEY_ALIAS")
+            keyAlias System.getenv("KEY_ALIAS")
             keyPassword System.getenv("KEY_PASSWORD")
         }
     }
@@ -36,12 +34,25 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    // HAPUS kotlinOptions { jvmTarget = "1.8" } ← ini sumber error
+}
+
+repositories {
+    google()
+    mavenCentral()
+    // untuk AAR stub React Native
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    flatDir { dirs "libs" }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "de.robv.android.xposed:api:82"      // Xposed API (sesuaikan versi)
+    // Stub React Native hanya untuk compile-time:
+    compileOnly "com.facebook.react:react-native:0.71.8"
+
+    // Xposed API (jadikan .jar di libs/api-82.jar):
+    implementation files("libs/api-82.jar")
+
+    // AndroidX
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.core:core-ktx:1.13.0"
     implementation "androidx.multidex:multidex:2.0.1"
-    // … dependency lainnya jika ada …
 }
