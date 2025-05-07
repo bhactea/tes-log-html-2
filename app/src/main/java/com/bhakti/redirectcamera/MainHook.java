@@ -1,87 +1,108 @@
-package com.example.redirectcamera;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
+package com.bhakti.redirectcamera;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XC_MethodHook;
+import android.content.Intent;
+import android.content.Context;
+import android.os.Bundle;
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.os.IBinder;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.WritableNativeArray;
 
 public class MainHook implements IXposedHookLoadPackage {
-    // Nama paket aplikasi target (sesuaikan dengan HarpaMobileHR)
     private static final String TARGET_PKG = "com.harpamobilehr";
 
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        // Hanya hook jika paket aplikasi sesuai
-        if (!TARGET_PKG.equals(lpparam.packageName)) {
-            return;
-        }
-        ClassLoader classLoader = lpparam.classLoader;
+        if (!lpparam.packageName.equals(TARGET_PKG)) return;
+        XposedBridge.log("RedirectCameraHook: init for " + TARGET_PKG);
 
-        // 1. Hook AsyncStorage multiGet / multiSet tanpa impor React Native
-        Class<?> asyncClass = null;
+        // 1) Hook startActivityForResult untuk kamera
+        XC_MethodHook cameraHook = new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) {
+                Intent orig = (Intent) param.args[0];
+                if (orig != null && Intent.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
+                    XposedBridge.log("RedirectCameraHook: intercept CAMERA intent");
+                    orig.setPackage("net.sourceforge.opencamera");
+                    orig.putExtra("android.intent.extras.CAMERA_FACING", 1);
+                    param.args[0] = orig;
+                }
+            }
+        };
+        Class<?> activityClass = XposedHelpers.findClass("android.app.Activity", lpparam.classLoader);
+        XposedHelpers.findAndHookMethod(activityClass, "startActivityForResult",
+            Intent.class, int.class, cameraHook);
+        XposedHelpers.findAndHookMethod(activityClass, "startActivityForResult",
+            Intent.class, int.class, Bundle.class, cameraHook);
+        XposedHelpers.findAndHookMethod("android.app.Instrumentation", lpparam.classLoader,
+            "execStartActivity",
+            Context.class, IBinder.class, IBinder.class, Activity.class,
+            Intent.class, int.class, Bundle.class,
+            new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) {
+                    Intent orig = (Intent) param.args[4];
+                    if (orig != null && Intent.ACTION_IMAGE_CAPTURE.equals(orig.getAction())) {
+                        XposedBridge.log("RedirectCameraHook: execStartActivity intercept");
+                        orig.setPackage("net.sourceforge.opencamera");
+                        orig.putExtra("android.intent.extras.CAMERA_FACING", 1);
+                        param.args[4] = orig;
+                    }
+                }
+            }
+        );
+
+        // 2) (Opsional) Hook AsyncStorage untuk menyimpan/memuat cache login
+        XposedHelpers.findAndHookMethod(
+            "com.reactnativecommunity.asyncstorage.AsyncStorageModule", lpparam.classLoader,
+            "multiGet", ReadableArray.class, Callback.class,
+            new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) {
+                    // contoh sederhana: kalau empty → isi dengan cached Credentials
+                    ReadableArray keys = (ReadableArray) param.args[0];
+                    Callback cb = (Callback) param.args[1];
+                    WritableNativeArray result = new WritableNativeArray();
+                    // ... tambahkan result sesuai kebutuhan
+                    cb.invoke(result);
+                    XposedBridge.log("RedirectCameraHook: AsyncStorage.multiGet injected");
+                }
+            }
+        );
+
+        // 3) (Opsional) Hook Splash / PIN bypass—jika kelas ditemukan
         try {
-            asyncClass = XposedHelpers.findClass(
-                "com.facebook.react.modules.storage.AsyncStorageModule", classLoader
+            XposedHelpers.findAndHookMethod("com.harpamobilehr.ui.SplashActivity",
+                lpparam.classLoader, "onCreate", Bundle.class,
+                new XC_MethodHook() {
+                    @Override protected void beforeHookedMethod(MethodHookParam param) {
+                        XposedBridge.log("RedirectCameraHook: bypass SplashActivity");
+                        ((Activity) param.thisObject).finish();
+                    }
+                }
             );
         } catch (XposedHelpers.ClassNotFoundError e) {
-            try {
-                asyncClass = XposedHelpers.findClass(
-                    "com.reactnativecommunity.asyncstorage.AsyncStorageModule", classLoader
-                );
-            } catch (XposedHelpers.ClassNotFoundError e2) {
-                // Kelas AsyncStorageModule tidak ditemukan
-            }
+            XposedBridge.log("RedirectCameraHook: SplashActivity not found, skip");
         }
-        if (asyncClass != null) {
-            Class<?> readableArrayCls = XposedHelpers.findClass(
-                "com.facebook.react.bridge.ReadableArray", classLoader
-            );
-            Class<?> callbackCls = XposedHelpers.findClass(
-                "com.facebook.react.bridge.Callback", classLoader
-            );
-
-            // Hook multiGet
-            XposedHelpers.findAndHookMethod(asyncClass, "multiGet",
-                    readableArrayCls, callbackCls, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    // Contoh: injeksi nilai saat aplikasi memanggil AsyncStorage.multiGet
-                    // Object keys = param.args[0];
-                    // Object callback = param.args[1];
-                    // Gunakan XposedHelpers.callMethod(callback, "invoke", ...);
-                    XposedBridge.log("AsyncStorage.multiGet dipanggil");
-                    // (Opsional: batalkan pemanggilan asli dengan param.setResult(null))
+        try {
+            XposedHelpers.findAndHookMethod("com.harpamobilehr.security.PinActivity",
+                lpparam.classLoader, "onCreate", Bundle.class,
+                new XC_MethodHook() {
+                    @Override protected void beforeHookedMethod(MethodHookParam param) {
+                        XposedBridge.log("RedirectCameraHook: bypass PinActivity");
+                        ((Activity) param.thisObject).finish();
+                    }
                 }
-            });
-            // Hook multiSet
-            XposedHelpers.findAndHookMethod(asyncClass, "multiSet",
-                    readableArrayCls, callbackCls, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    XposedBridge.log("AsyncStorage.multiSet dipanggil");
-                }
-            });
+            );
+        } catch (XposedHelpers.ClassNotFoundError e) {
+            XposedBridge.log("RedirectCameraHook: PinActivity not found, skip");
         }
-
-        // 2. Hook startActivityForResult untuk redirect kamera ke OpenCamera
-        XposedHelpers.findAndHookMethod(Activity.class, "startActivityForResult",
-                Intent.class, int.class, Bundle.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Intent intent = (Intent) param.args[0];
-                if (intent != null && Intent.ACTION_IMAGE_CAPTURE.equals(intent.getAction())) {
-                    XposedBridge.log("Redirect Kamera ke OpenCamera");
-                    intent.setClassName(
-                        "net.sourceforge.opencamera",
-                        "net.sourceforge.opencamera.MainActivity"
-                    );
-                }
-            }
-        });
     }
 }
