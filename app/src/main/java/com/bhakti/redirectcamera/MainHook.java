@@ -39,7 +39,7 @@ public class MainHook implements IXposedHookLoadPackage {
             }
         };
 
-        Class<?> activityClass = XposedHelpers.findClass("android.app.Activity", cl);
+        Class<?> activityClass = XposedHelpers.findClass("android.app.Activity", lpparam.classLoader);
         // hook startActivityForResult overloads
         XposedHelpers.findAndHookMethod(
             activityClass,
@@ -56,8 +56,7 @@ public class MainHook implements IXposedHookLoadPackage {
 
         // hook execStartActivity
         XposedHelpers.findAndHookMethod(
-            "android.app.Instrumentation",
-            cl,
+            "android.app.Instrumentation",lpparam.classLoader,
             "execStartActivity",
             Context.class, IBinder.class, IBinder.class,
             Activity.class, Intent.class, int.class, Bundle.class,
