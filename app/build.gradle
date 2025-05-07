@@ -3,20 +3,62 @@ plugins {
 }
 
 android {
+    // 1) Tambahkan baris ini:
+    namespace "com.bhakti.redirectcamera"
+
     compileSdkVersion 34
+
+    signingConfigs {
+        release {
+            storeFile file("$rootDir/my-release-key.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
+
     defaultConfig {
         applicationId "com.bhakti.redirectcamera"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
 
-    // Tidak perlu include React Native dependency di runtime
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
-    // Hanya compileOnly, tidak dibundel ke APK
-    compileOnly files('libs/api-82.jar')
-    // Jangan include com.facebook.react:react-native di runtime
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "androidx.multidex:multidex:2.0.1"
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.core:core-ktx:1.13.0"
+    // jika butuh stub ReactAPI, taruh di libs dan tambahkan di bawah:
+    implementation files('libs/api-82.jar')
+}
+
+// Pastikan resolutionStrategy untuk Kotlin
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'org.jetbrains.kotlin') {
+            details.useVersion "1.8.22"
+            details.because "Memastikan versi Kotlin seragam"
+        }
+    }
 }
