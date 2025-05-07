@@ -1,14 +1,17 @@
 // File: build.gradle (root)
-// build.gradle (root) 
+// build.gradle (root)
+
 buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
     dependencies {
         classpath "com.android.tools.build:gradle:8.4.0"
     }
 }
 
-// tidak boleh ada `repositories { … }` di sini!
-
-
+// Jangan tambahkan lagi `allprojects { repositories { ... } }` di sini!
 
 
 // Matikan task lint terbaru yang sering mengganggu modul Xposed
