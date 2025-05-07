@@ -1,22 +1,23 @@
 // File: build.gradle (root)
 
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:8.4.0"
-    }
-}
+- buildscript {
+-     repositories {
+-         google()
+-         mavenCentral()
+-     }
+-     dependencies {
+-         classpath "com.android.tools.build:gradle:8.4.0"
+-     }
+- }
+-
+- allprojects {
+-     repositories {
+-         google()
+-         mavenCentral()
+-         flatDir { dirs "app/libs" }
+-     }
+- }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        flatDir { dirs "app/libs" }  // untuk api-82.jar dan stub-react-native.jar
-    }
-}
 
 // Matikan task lint terbaru yang sering mengganggu modul Xposed
 tasks.withType(JavaCompile).configureEach {
