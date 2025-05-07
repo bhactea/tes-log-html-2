@@ -1,2 +1,14 @@
 rootProject.name = "RedirectCameraHook"
 include ':app'
+// file: settings.gradle (Gradle 7.0+)
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+  repositories {
+    // Repository internal Interloc Solutions yang meng-host de.robv.android.xposed:api
+    maven {
+      url "https://archiva.interlocsolutions.com/archiva/repository/internal/"
+    }                                                                  
+    mavenCentral()
+    google()
+  }
+}
