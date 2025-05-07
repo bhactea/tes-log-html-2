@@ -1,13 +1,12 @@
-// build.gradle (Project)
+// File: build.gradle (root)
+
 buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://repo.spring.io/milestone" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.3.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22"  // if using Kotlin
+        classpath "com.android.tools.build:gradle:8.4.0"
     }
 }
 
@@ -15,10 +14,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://repo.spring.io/milestone" }
+        flatDir { dirs "app/libs" }  // untuk api-82.jar dan stub-react-native.jar
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+// Matikan task lint terbaru yang sering mengganggu modul Xposed
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += "-Xlint:-unchecked"
+    options.compilerArgs += "-Xlint:-deprecation"
 }
