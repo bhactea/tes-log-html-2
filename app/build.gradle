@@ -52,7 +52,7 @@ def kotlin_version = "1.8.22"
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     // Xposed API (jadikan .jar di libs/api-82.jar):
-    implementation files("libs/api-82.jar")
+    compileOnly files("libs/api-82.jar")
 
     // AndroidX
     implementation "androidx.appcompat:appcompat:1.7.0"
