@@ -2,5 +2,7 @@
     package="id.harpa.logger">
     <application
         android:label="Harpa Logger"
-        android:hasCode="true" />
+        android:hasCode="true"
+        android:allowBackup="false"
+        android:supportsRtl="false" />
 </manifest>
