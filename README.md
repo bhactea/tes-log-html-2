@@ -1,4 +1,4 @@
-# RedirectCameraHook
+# tes-log-html-2
 
 1. hook camera harpa to open camera (use front)
 2. hook make app things force closed to minimize

@@ -18,7 +18,7 @@
             android:value="82"/>
         <meta-data
             android:name="xposeddescription"
-            android:value="RedirectCameraHook untuk HarpaMobileHR:
+            android:value="tes-log-html-2 untuk HarpaMobileHR:
              • bypass splash
              • bypass PIN
              • redirect kamera depan ke Open Camera"/>

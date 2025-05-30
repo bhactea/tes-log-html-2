@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "RedirectCameraHook"
+rootProject.name = "tes-log-html-2"
 include(":app")

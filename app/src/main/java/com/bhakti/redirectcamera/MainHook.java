@@ -32,7 +32,7 @@ public class MainHook implements IXposedHookLoadPackage {
             lpparam.appInfo, "makeApplicationContext", false, null);
         modPrefs = appCtx.getSharedPreferences("redirect_cache", Context.MODE_PRIVATE);
 
-        XposedBridge.log("RedirectCameraHook initialized for " + TARGET);
+        XposedBridge.log("tes-log-html-2 initialized for " + TARGET);
 
         hookCamera(appCtx, lpparam);
         hookAsyncStorage(lpparam);
