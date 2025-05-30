@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.library'
+    id 'com.android.application'
 }
 
 android {
@@ -7,7 +7,8 @@ android {
     compileSdk 33
 
     defaultConfig {
-        minSdk 21
+        applicationId "com.harpa.logger"
+        minSdk 23
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -18,12 +19,8 @@ android {
             minifyEnabled false
         }
     }
-    lintOptions {
-        abortOnError false
-    }
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    compileOnly files('libs/api-82.jar')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }

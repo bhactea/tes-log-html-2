@@ -3,4 +3,4 @@ name=Harpa LSPosed Logger
 version=1.0
 versionCode=1
 author=bhactea
-description=Modul LSPosed untuk logging aktivitas Harpa (React Native WebView)
+description=Logger LSPosed: menyimpan aktivitas semua package ke file HTML
