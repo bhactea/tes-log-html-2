@@ -2,9 +2,10 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://api.xposed.info/' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath 'com.android.tools.build:gradle:8.0.2'
     }
 }
 
@@ -12,5 +13,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://api.xposed.info/' }
     }
 }
