@@ -1,6 +1,6 @@
-id=harpa_logger
-name=Harpa LSPosed Logger
-version=1.0
+id=harpa.logger
+name=Harpa Logger
+version=1
 versionCode=1
 author=bhactea
-description=Logger LSPosed: menyimpan aktivitas semua package ke file HTML
+description=Logger semua aktivitas ke file HTML
