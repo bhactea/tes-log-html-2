@@ -27,6 +27,11 @@ jobs:
     - name: Build unsigned APK
       run: ./gradlew assembleRelease --no-daemon
 
+    - name: Check LSPosed Files
+      run: |
+        test -f app/src/main/assets/module.prop || (echo "Missing module.prop!" && exit 1)
+        test -f app/src/main/assets/xposed_init || (echo "Missing xposed_init!" && exit 1)
+
     - name: Decode keystore from repo
       run: base64 -d scripts/release.keystore.b64 > release.keystore
 

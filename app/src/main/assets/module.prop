@@ -1,6 +1,6 @@
 id=harpa.logger
 name=Harpa Logger
-version=1
+version=1.0
 versionCode=1
 author=bhactea
-description=Logger semua aktivitas ke file HTML
+description=Modul LSPosed untuk logging semua aktivitas aplikasi ke HTML
