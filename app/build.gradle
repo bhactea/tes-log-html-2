@@ -1,67 +1,28 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+    id 'com.android.library'
 }
 
 android {
-    namespace "com.bhakti.redirectcamera"
-    compileSdk 34
+    namespace 'com.harpa.logger'
+    compileSdk 33
 
     defaultConfig {
-        minSdk 24
-        targetSdk 34
+        minSdk 21
+        targetSdk 33
         versionCode 1
         versionName "1.0"
     }
 
-    signingConfigs {
-        release {
-            storeFile file("$rootDir/my-release-key.jks")
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
-        }
-    }
-
     buildTypes {
         release {
-            signingConfig signingConfigs.release
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
-    packagingOptions {
-        // Hapus duplikat resource jika muncul konflik lain
-        exclude "META-INF/*.kotlin_module"
+    lintOptions {
+        abortOnError false
     }
 }
-
-def kotlin_version = "1.8.22"
-
-
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    // Xposed API (jadikan .jar di libs/api-82.jar):
-    compileOnly files("libs/api-82.jar")
-
-    // AndroidX
-    implementation "androidx.appcompat:appcompat:1.7.0"
-    implementation "androidx.core:core-ktx:1.13.0"
-    implementation "androidx.multidex:multidex:2.0.1"
-}
-// Paksa penggunaan satu versi stdlib
-configurations.all {
-    resolutionStrategy {
-        force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    }
+    compileOnly files('libs/api-82.jar')
 }

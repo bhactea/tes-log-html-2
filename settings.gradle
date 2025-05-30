@@ -1,23 +1,2 @@
-// settings.gradle
-
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-}
-
-dependencyResolutionManagement {
-    // tegakkan agar tidak boleh ada repositori di sub-project
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
-    repositories {
-        google()
-        mavenCentral()
-        flatDir { dirs "app/libs" }   // untuk api-82.jar dan stub-react-native.jar
-    }
-}
-
 rootProject.name = "tes-log-html-2"
-include(":app")
+include ':app'
