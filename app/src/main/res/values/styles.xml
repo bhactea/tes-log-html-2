@@ -1,6 +1,6 @@
 <resources>
   <!-- Tema modul LSPosed hook -->
-  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
     <item name="android:windowDisablePreview">true</item>
 <!-- Tambahkan custom item di sini jika perlu -->
   </style>
