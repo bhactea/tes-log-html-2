@@ -20,4 +20,7 @@ android {
     }
     namespace 'id.harpa.logger'
 }
-dependencies {}
+
+dependencies {
+    compileOnly 'de.robv.android.xposed:api:82'
+}
