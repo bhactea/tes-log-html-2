@@ -35,6 +35,9 @@ jobs:
       - name: Decode keystore from secret
         run: echo "${{ secrets.KEYSTORE_B64 }}" | base64 -d > release.keystore
 
+      - name: Add build-tools to PATH
+        run: echo "$ANDROID_HOME/build-tools/30.0.3" >> $GITHUB_PATH
+
       - name: Sign APK using apksigner (v2+)
         run: |
           apksigner sign \
