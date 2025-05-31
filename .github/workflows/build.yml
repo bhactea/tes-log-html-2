@@ -24,7 +24,11 @@ jobs:
           packages: "platforms;android-33 build-tools;30.0.3"
 
       - name: Accept Android SDK licenses manually
+<<<<<<< HEAD
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+=======
+        run: yes | sdkmanager --licenses || true
+>>>>>>> 5f5bf13 (🔧 Update build.yml: use apksigner with v2 signature)
 
       - name: Make gradlew executable
         run: chmod +x gradlew
@@ -35,8 +39,9 @@ jobs:
       - name: Decode keystore from secret
         run: echo "${{ secrets.KEYSTORE_B64 }}" | base64 -d > release.keystore
 
-      - name: Sign APK with jarsigner
+      - name: Sign APK with apksigner
         run: |
+<<<<<<< HEAD
           jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
             -keystore release.keystore \
             -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
@@ -50,6 +55,15 @@ jobs:
       - name: Align APK (optional but recommended)
         run: |
           zipalign -v -p 4 app/build/outputs/apk/release/app-release-unsigned.apk app-release-signed.apk
+=======
+          apksigner sign \
+            --ks release.keystore \
+            --ks-key-alias ${{ secrets.KEY_ALIAS }} \
+            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --key-pass pass:${{ secrets.KEY_PASSWORD }} \
+            --out app-release-signed.apk \
+            app/build/outputs/apk/release/app-release-unsigned.apk
+>>>>>>> 5f5bf13 (🔧 Update build.yml: use apksigner with v2 signature)
 
       - name: Verify APK signature
         run: |
