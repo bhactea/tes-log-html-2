@@ -30,16 +30,18 @@ jobs:
       run: ./gradlew assembleRelease --no-daemon
 
     - name: Decode keystore
+    - name: Sign APK with jarsigner
+      run: |
+        jarsigner -verbose \
+          -keystore release.keystore \
+          -storepass $KEYSTORE_PASS \
+          -keypass $KEYSTORE_PASS \
+          app/build/outputs/apk/release/app-release-unsigned.apk \
+          harpa
       run: echo "$KEYSTORE_B64" | base64 -d > release.keystore
       env:
         KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
 
-    - name: Sign APK with apksigner
-      run: |
-        $ANDROID_HOME/build-tools/30.0.3/apksigner sign \
-          --ks release.keystore \
-          --ks-pass pass:${{ secrets.KEYSTORE_PASS }} \
-          --key-pass pass:${{ secrets.KEYSTORE_PASS }} \
           --out app-release-signed.apk \
           app/build/outputs/apk/release/app-release-unsigned.apk
 
