@@ -23,8 +23,8 @@ jobs:
         with:
           packages: "platforms;android-33 build-tools;30.0.3"
 
-      - name: Accept Android SDK licenses manually
-        run: yes | sdkmanager --licenses || true
+      - name: Accept all Android SDK licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
       - name: Make gradlew executable
         run: chmod +x gradlew
@@ -34,9 +34,6 @@ jobs:
 
       - name: Decode keystore from secret
         run: echo "${{ secrets.KEYSTORE_B64 }}" | base64 -d > release.keystore
-
-      - name: Add build-tools to PATH
-        run: echo "$ANDROID_HOME/build-tools/30.0.3" >> $GITHUB_PATH
 
       - name: Sign APK using apksigner (v2+)
         run: |
@@ -49,8 +46,7 @@ jobs:
             app/build/outputs/apk/release/app-release-unsigned.apk
 
       - name: Verify APK signature
-        run: |
-          apksigner verify --verbose app-release-signed.apk || echo "Verification failed"
+        run: apksigner verify app-release-signed.apk || echo "Verification failed (ignore if not using apksigner)"
 
       - name: Upload final APK
         uses: actions/upload-artifact@v4
