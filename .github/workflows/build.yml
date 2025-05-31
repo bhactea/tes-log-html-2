@@ -20,6 +20,8 @@ jobs:
 
     - name: Set up Android SDK
       uses: android-actions/setup-android@v3
+      with:
+        packages: build-tools;30.0.3
 
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
@@ -27,28 +29,22 @@ jobs:
     - name: Build unsigned APK
       run: ./gradlew assembleRelease --no-daemon
 
-    - name: Check LSPosed Files
+    - name: Decode keystore
+      run: echo "$KEYSTORE_B64" | base64 -d > release.keystore
+      env:
+        KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+
+    - name: Sign APK with apksigner
       run: |
-        test -f app/src/main/assets/module.prop || (echo "Missing module.prop!" && exit 1)
-        test -f app/src/main/assets/xposed_init || (echo "Missing xposed_init!" && exit 1)
-
-    - name: Decode keystore from repo
-      run: base64 -d scripts/release.keystore.b64 > release.keystore
-
-    - name: Sign APK
-      run: |
-        jarsigner -verbose \
-          -keystore release.keystore \
-          -storepass harpa123 \
-          -keypass harpa123 \
-          app/build/outputs/apk/release/app-release-unsigned.apk \
-          harpa
-
-    - name: Rename signed APK
-      run: mv app/build/outputs/apk/release/app-release-unsigned.apk app-release-signed.apk
+        $ANDROID_HOME/build-tools/30.0.3/apksigner sign \
+          --ks release.keystore \
+          --ks-pass pass:${{ secrets.KEYSTORE_PASS }} \
+          --key-pass pass:${{ secrets.KEYSTORE_PASS }} \
+          --out app-release-signed.apk \
+          app/build/outputs/apk/release/app-release-unsigned.apk
 
     - name: Upload signed APK
       uses: actions/upload-artifact@v4
       with:
-        name: harpa-logger-apk
+        name: harpa-logger.apk
         path: app-release-signed.apk
