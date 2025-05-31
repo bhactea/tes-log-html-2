@@ -23,13 +23,8 @@ jobs:
         with:
           packages: "platforms;android-33 build-tools;30.0.3"
 
-      - name: Accept Android SDK licenses manually
-<<<<<<< HEAD
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-=======
+- name: Accept Android SDK licenses manually
         run: yes | sdkmanager --licenses || true
->>>>>>> 5f5bf13 (🔧 Update build.yml: use apksigner with v2 signature)
-
       - name: Make gradlew executable
         run: chmod +x gradlew
 
