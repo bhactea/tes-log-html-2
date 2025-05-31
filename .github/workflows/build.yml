@@ -30,7 +30,8 @@ jobs:
         run: ./gradlew app:assembleRelease --no-daemon
 
       - name: Decode keystore from secret
-        run: echo "$KEYSTORE_B64" | base64 -d > release.keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_B64 }}" | base64 -d > release.keystore
 
       - name: Sign APK with jarsigner
         run: |
