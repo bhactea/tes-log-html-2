@@ -21,7 +21,9 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: "platforms;android-33 build-tools;30.0.3"
+          packages: |
+            platforms;android-33
+            build-tools;30.0.3
 
       - name: Make gradlew executable
         run: chmod +x gradlew
@@ -38,7 +40,7 @@ jobs:
             app/build/outputs/apk/release/app-release-unsigned.apk \
             harpaloggerkey
 
-      - name: Align APK (optional)
+      - name: Align APK (optional but recommended)
         run: |
           zipalign -v -p 4 app/build/outputs/apk/release/app-release-unsigned.apk app-release-signed.apk
 
