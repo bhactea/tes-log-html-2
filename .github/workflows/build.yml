@@ -25,6 +25,9 @@ jobs:
             platforms;android-33
             build-tools;30.0.3
 
+      - name: Accept licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+
       - name: Make gradlew executable
         run: chmod +x gradlew
 
