@@ -1,4 +1,5 @@
 name: Build HarpaLogger
+
 on:
   push:
     branches: [ main ]
@@ -6,6 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -16,22 +18,39 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set SKIP_JDK_VERSION_CHECK
-        run: echo "SKIP_JDK_VERSION_CHECK=true" >> \$GITHUB_ENV
-
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: "platforms;android-33 build-tools;33.0.0"
+          packages: "platforms;android-33 build-tools;30.0.3"
 
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build Release APK
-        run: ./gradlew app:assembleRelease
+      - name: Build release APK
+        run: ./gradlew app:assembleRelease --no-daemon
 
-      - name: Upload APK artifact
+      - name: Decode keystore from secret
+        run: echo "$KEYSTORE_B64" | base64 -d > release.keystore
+
+      - name: Sign APK with jarsigner
+        run: |
+          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore release.keystore \
+            -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
+            -keypass ${{ secrets.KEY_PASSWORD }} \
+            app/build/outputs/apk/release/app-release-unsigned.apk \
+            ${{ secrets.KEY_ALIAS }}
+
+      - name: Align APK (optional but recommended)
+        run: |
+          zipalign -v -p 4 app/build/outputs/apk/release/app-release-unsigned.apk app-release-signed.apk
+
+      - name: Verify APK signature
+        run: |
+          apksigner verify app-release-signed.apk || echo "Verification failed (ignore if not using apksigner)"
+
+      - name: Upload final APK
         uses: actions/upload-artifact@v4
         with:
-          name: harpa-logger-release
-          path: app/build/outputs/apk/release/*.apk
+          name: harpalogger-release
+          path: app-release-signed.apk
