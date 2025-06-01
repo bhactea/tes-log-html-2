@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
 }
+
 android {
     namespace 'id.harpa.logger.dummy'
     compileSdk 33
@@ -15,6 +16,7 @@ android {
         }
     }
 }
+
 dependencies {
-    implementation project(':logger')
+    implementation project(':app')
 }
