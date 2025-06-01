@@ -1,11 +1,10 @@
 package id.harpa.logger
 
+import android.util.Log
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.Date
-import android.os.Environment
-import android.util.Log
 
 object LogXposed {
     private val logDir = File("/data/data/id.harpa.logger/files/logharpa")
@@ -16,7 +15,7 @@ object LogXposed {
             if (!logDir.exists()) logDir.mkdirs()
             if (!logFile.exists()) logFile.createNewFile()
         } catch (e: Exception) {
-            Log.e("LogXposed", "Failed to init log file: ${e.message}")
+            Log.e("LogXposed", "Gagal buat folder log: ${e.message}")
         }
     }
 
@@ -26,7 +25,7 @@ object LogXposed {
                 fw.append(html).append("\n")
             }
         } catch (e: Exception) {
-            Log.e("LogXposed", "Error writing to log: ${e.message}")
+            Log.e("LogXposed", "Gagal nulis log: ${e.message}")
         }
     }
 
