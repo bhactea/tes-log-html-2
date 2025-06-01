@@ -15,23 +15,20 @@ object LogXposed {
             if (!logDir.exists()) logDir.mkdirs()
             if (!logFile.exists()) logFile.createNewFile()
         } catch (e: Exception) {
-            Log.e("LogXposed", "Gagal buat folder log: ${e.message}")
+            Log.e("LogXposed", "Gagal init log: ${e.message}")
         }
     }
 
     fun append(html: String) {
         try {
-            FileWriter(logFile, true).use { fw ->
-                fw.append(html).append("\n")
-            }
+            FileWriter(logFile, true).use { it.append(html).append("\n") }
         } catch (e: Exception) {
-            Log.e("LogXposed", "Gagal nulis log: ${e.message}")
+            Log.e("LogXposed", "Error tulis log: ${e.message}")
         }
     }
 
     fun log(tag: String, msg: String) {
         val time = SimpleDateFormat("HH:mm:ss").format(Date())
-        val html = "<p><b>[$time][$tag]</b> $msg</p>"
-        append(html)
+        append("<p><b>[$time][$tag]</b> $msg</p>")
     }
 }
