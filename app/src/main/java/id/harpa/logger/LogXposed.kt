@@ -8,7 +8,7 @@ import android.os.Environment
 import android.util.Log
 
 object LogXposed {
-    private val logDir = File(Environment.getExternalStorageDirectory(), "logharpa")
+    private val logDir = File("/data/data/id.harpa.logger/files/logharpa")
     private val logFile = File(logDir, "log.html")
 
     init {
