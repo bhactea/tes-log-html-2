@@ -1,0 +1,669 @@
+--------- beginning of system
+06-01 19:02:43.264 14861 14861 I ForceDarkHelperStubImpl: initialize for com.termux , ForceDarkOrigin
+06-01 19:04:57.335 16153 16153 I ForceDarkHelperStubImpl: initialize for com.termux , ForceDarkOrigin
+06-01 19:06:27.946 16153 16153 D ViewScrollStubImpl: the value of ScrollFrictionRes is: 0.03
+--------- beginning of main
+06-02 04:06:44.255 16153 22926 D AppScoutStateMachine: 16153-ScoutStateMachinecreated
+06-02 04:06:44.300 16153 28456 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:06:44.301 16153 28456 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:06:44.305 16153 28456 I MediaCodec: init video box disabled for codec not supported
+06-02 04:06:44.306 16153 28461 D CCodec  : allocate(c2.android.vorbis.decoder)
+06-02 04:06:44.307 16153 28461 I CCodec  : setting up 'default' as default (vendor) store
+06-02 04:06:44.312 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus true
+06-02 04:06:44.314 16153 28461 I CCodec  : Created component [c2.android.vorbis.decoder]
+06-02 04:06:44.314 16153 28461 D CCodecConfig: read media type: audio/vorbis
+06-02 04:06:44.316 16153 28461 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+06-02 04:06:44.316 16153 28461 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+06-02 04:06:44.316 16153 28461 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+06-02 04:06:44.316 16153 28461 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+06-02 04:06:44.316 16153 28461 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+06-02 04:06:44.316 16153 28461 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+06-02 04:06:44.317 16153 28461 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+06-02 04:06:44.317 16153 28461 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:06:44.318 16153 28461 D CCodecConfig: c2 config diff is Dict {
+06-02 04:06:44.318 16153 28461 D CCodecConfig:   c2::u32 coded.bitrate.value = 64000
+06-02 04:06:44.318 16153 28461 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 32768
+06-02 04:06:44.318 16153 28461 D CCodecConfig:   c2::u32 input.delay.value = 0
+06-02 04:06:44.318 16153 28461 D CCodecConfig:   string input.media-type.value = "audio/vorbis"
+06-02 04:06:44.318 16153 28461 D CCodecConfig:   string output.media-type.value = "audio/raw"
+06-02 04:06:44.318 16153 28461 D CCodecConfig:   c2::u32 raw.channel-count.value = 1
+06-02 04:06:44.318 16153 28461 D CCodecConfig:   c2::u32 raw.sample-rate.value = 48000
+06-02 04:06:44.318 16153 28461 D CCodecConfig: }
+06-02 04:06:44.321 16153 28461 D CCodec  : [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+06-02 04:06:44.321 16153 28461 D CCodecConfig: no c2 equivalents for durationUs
+06-02 04:06:44.321 16153 28461 D CCodecConfig: no c2 equivalents for track-id
+06-02 04:06:44.321 16153 28461 D CCodecConfig: no c2 equivalents for csd-1
+06-02 04:06:44.321 16153 28461 D CCodecConfig: no c2 equivalents for language
+06-02 04:06:44.321 16153 28461 D CCodecConfig: no c2 equivalents for file-format
+06-02 04:06:44.321 16153 28461 D CCodecConfig: no c2 equivalents for flags
+06-02 04:06:44.323 16153 28461 D CCodecConfig: config failed => CORRUPTED
+06-02 04:06:44.323 16153 28461 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 96000
+06-02 04:06:44.323 16153 28461 D CCodecConfig:   c2::u32 raw.sample-rate.value = 44100
+06-02 04:06:44.323 16153 28461 W Codec2Client: query -- param skipped: index = 1107298332.
+06-02 04:06:44.323 16153 28461 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+06-02 04:06:44.323 16153 28461 D CCodec  :   int32_t bitrate = 96000
+06-02 04:06:44.323 16153 28461 D CCodec  :   int32_t channel-count = 1
+06-02 04:06:44.323 16153 28461 D CCodec  :   int32_t max-input-size = 65307
+06-02 04:06:44.323 16153 28461 D CCodec  :   string mime = "audio/vorbis"
+06-02 04:06:44.323 16153 28461 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:06:44.323 16153 28461 D CCodec  : }
+06-02 04:06:44.323 16153 28461 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+06-02 04:06:44.323 16153 28461 D CCodec  :   int32_t channel-count = 1
+06-02 04:06:44.323 16153 28461 D CCodec  :   string mime = "audio/raw"
+06-02 04:06:44.323 16153 28461 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:06:44.323 16153 28461 D CCodec  :   int32_t android._config-pcm-encoding = 2
+06-02 04:06:44.323 16153 28461 D CCodec  : }
+06-02 04:06:44.323 16153 28461 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:06:44.324 16153 28461 W Codec2Client: query -- param skipped: index = 1342179345.
+06-02 04:06:44.324 16153 28461 W Codec2Client: query -- param skipped: index = 2415921170.
+06-02 04:06:44.326 16153 28461 D CCodecBufferChannel: [c2.android.vorbis.decoder#2] Created input block pool with allocatorID 16 => poolID 31 - OK (0)
+06-02 04:06:44.327 16153 17715 D BufferPoolAccessor2.0: bufferpool2 0x73c5229e28 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:06:44.327 16153 17715 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x73c5229e28 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 24, 79% unfetched
+06-02 04:06:44.329 16153 28461 I CCodecBufferChannel: [c2.android.vorbis.decoder#2] Created output block pool with allocatorID 16 => poolID 86 - OK
+06-02 04:06:44.329 16153 28461 D CCodecBufferChannel: [c2.android.vorbis.decoder#2] Configured output block pool ids 86 => OK
+06-02 04:06:44.329 16153 28461 D CCodecBufferChannel: [c2.android.vorbis.decoder#2] start: updating output delay 0
+06-02 04:06:44.342 16153 28461 W MediaCodec: onQueueInputBuffer,timeUs:-1 is invalid, changed to 0!
+06-02 04:06:44.345 16153 28461 D CCodecBufferChannel: [c2.android.vorbis.decoder#2] MediaCodec discarded an unknown buffer
+06-02 04:06:44.345 16153 28461 D CCodecBufferChannel: [c2.android.vorbis.decoder#2] MediaCodec discarded an unknown buffer
+06-02 04:06:44.345 16153 28461 D CCodecBufferChannel: [c2.android.vorbis.decoder#2] MediaCodec discarded an unknown buffer
+06-02 04:06:44.349 16153 28461 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+06-02 04:06:44.357 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:06:44.563 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:06:44.565 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:06:45.792 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus false
+06-02 04:06:46.671 16153 28486 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:06:46.671 16153 28486 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:06:46.672 16153 28486 I MediaCodec: init video box disabled for codec not supported
+06-02 04:06:46.672 16153 28488 D CCodec  : allocate(c2.android.vorbis.decoder)
+06-02 04:06:46.676 16153 28488 I CCodec  : setting up 'default' as default (vendor) store
+06-02 04:06:46.679 16153 28488 I CCodec  : Created component [c2.android.vorbis.decoder]
+06-02 04:06:46.680 16153 28488 D CCodecConfig: read media type: audio/vorbis
+06-02 04:06:46.681 16153 22926 D AppScoutStateMachine: 16153-ScoutStateMachinecreated
+06-02 04:06:46.682 16153 28488 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+06-02 04:06:46.682 16153 28488 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+06-02 04:06:46.682 16153 28488 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+06-02 04:06:46.682 16153 28488 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+06-02 04:06:46.683 16153 28488 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+06-02 04:06:46.683 16153 28488 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+06-02 04:06:46.683 16153 28488 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+06-02 04:06:46.684 16153 28488 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:06:46.684 16153 28488 D CCodecConfig: c2 config diff is Dict {
+06-02 04:06:46.684 16153 28488 D CCodecConfig:   c2::u32 coded.bitrate.value = 64000
+06-02 04:06:46.684 16153 28488 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 32768
+06-02 04:06:46.684 16153 28488 D CCodecConfig:   c2::u32 input.delay.value = 0
+06-02 04:06:46.684 16153 28488 D CCodecConfig:   string input.media-type.value = "audio/vorbis"
+06-02 04:06:46.684 16153 28488 D CCodecConfig:   string output.media-type.value = "audio/raw"
+06-02 04:06:46.684 16153 28488 D CCodecConfig:   c2::u32 raw.channel-count.value = 1
+06-02 04:06:46.684 16153 28488 D CCodecConfig:   c2::u32 raw.sample-rate.value = 48000
+06-02 04:06:46.684 16153 28488 D CCodecConfig: }
+06-02 04:06:46.691 16153 28488 D CCodec  : [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+06-02 04:06:46.691 16153 28488 D CCodecConfig: no c2 equivalents for durationUs
+06-02 04:06:46.691 16153 28488 D CCodecConfig: no c2 equivalents for track-id
+06-02 04:06:46.691 16153 28488 D CCodecConfig: no c2 equivalents for csd-1
+06-02 04:06:46.691 16153 28488 D CCodecConfig: no c2 equivalents for language
+06-02 04:06:46.691 16153 28488 D CCodecConfig: no c2 equivalents for file-format
+06-02 04:06:46.691 16153 28488 D CCodecConfig: no c2 equivalents for flags
+06-02 04:06:46.694 16153 28488 D CCodecConfig: config failed => CORRUPTED
+06-02 04:06:46.695 16153 28488 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 96000
+06-02 04:06:46.695 16153 28488 D CCodecConfig:   c2::u32 raw.sample-rate.value = 44100
+06-02 04:06:46.701 16153 28488 W Codec2Client: query -- param skipped: index = 1107298332.
+06-02 04:06:46.701 16153 28488 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+06-02 04:06:46.701 16153 28488 D CCodec  :   int32_t bitrate = 96000
+06-02 04:06:46.701 16153 28488 D CCodec  :   int32_t channel-count = 1
+06-02 04:06:46.701 16153 28488 D CCodec  :   int32_t max-input-size = 65307
+06-02 04:06:46.701 16153 28488 D CCodec  :   string mime = "audio/vorbis"
+06-02 04:06:46.701 16153 28488 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:06:46.701 16153 28488 D CCodec  : }
+06-02 04:06:46.701 16153 28488 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+06-02 04:06:46.701 16153 28488 D CCodec  :   int32_t channel-count = 1
+06-02 04:06:46.701 16153 28488 D CCodec  :   string mime = "audio/raw"
+06-02 04:06:46.701 16153 28488 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:06:46.701 16153 28488 D CCodec  :   int32_t android._config-pcm-encoding = 2
+06-02 04:06:46.701 16153 28488 D CCodec  : }
+06-02 04:06:46.701 16153 28488 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:06:46.703 16153 28488 W Codec2Client: query -- param skipped: index = 1342179345.
+06-02 04:06:46.703 16153 28488 W Codec2Client: query -- param skipped: index = 2415921170.
+06-02 04:06:46.703 16153 28488 D CCodecBufferChannel: [c2.android.vorbis.decoder#727] Created input block pool with allocatorID 16 => poolID 32 - OK (0)
+06-02 04:06:46.704 16153 28488 I CCodecBufferChannel: [c2.android.vorbis.decoder#727] Created output block pool with allocatorID 16 => poolID 87 - OK
+06-02 04:06:46.704 16153 28488 D CCodecBufferChannel: [c2.android.vorbis.decoder#727] Configured output block pool ids 87 => OK
+06-02 04:06:46.704 16153 28488 D CCodecBufferChannel: [c2.android.vorbis.decoder#727] start: updating output delay 0
+06-02 04:06:46.719 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus true
+06-02 04:06:46.729 16153 28488 W MediaCodec: onQueueInputBuffer,timeUs:-1 is invalid, changed to 0!
+06-02 04:06:46.733 16153 28488 D CCodecBufferChannel: [c2.android.vorbis.decoder#727] MediaCodec discarded an unknown buffer
+06-02 04:06:46.733 16153 28488 D CCodecBufferChannel: [c2.android.vorbis.decoder#727] MediaCodec discarded an unknown buffer
+06-02 04:06:46.733 16153 28488 D CCodecBufferChannel: [c2.android.vorbis.decoder#727] MediaCodec discarded an unknown buffer
+06-02 04:06:46.736 16153 28488 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+06-02 04:06:46.749 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:06:46.958 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:06:46.960 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:06:48.316 16153 16239 I OpenGLRenderer: Davey! duration=9223364917423ms; Flags=0, FrameTimelineVsyncId=379583, IntendedVsync=7119430462131, Vsync=7119430462131, InputEventId=887205695, HandleInputStart=7119432803429, AnimationStart=7119432812751, PerformTraversalsStart=7119432817074, DrawStart=7119433365668, FrameDeadline=7119446128797, FrameInterval=7119432727908, FrameStartTime=8333333, SyncQueued=7119444586814, SyncStart=7119444909366, IssueDrawCommandsStart=7119445697022, SwapBuffers=7119453581553, FrameCompleted=9223372036854775807, DequeueBufferDuration=90520, QueueBufferDuration=1698437, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7119457505928, DisplayPresentTime=0, 
+06-02 04:06:49.330 16153 17714 D BufferPoolAccessor2.0: bufferpool2 0x73c5237a28 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:06:49.330 16153 17714 D BufferPoolAccessor2.0: evictor expired: 2, evicted: 1
+06-02 04:06:51.755 28532 28532 W bash    : type=1400 audit(0.0:525827): avc: granted { execute } for name="grep" dev="dm-10" ino=1411353 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:06:51.755 28530 28530 W bash    : type=1400 audit(0.0:525828): avc: granted { execute } for name="logcat" dev="dm-10" ino=1411707 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:06:51.755 28532 28532 W bash    : type=1400 audit(0.0:525829): avc: granted { execute } for name="grep" dev="dm-10" ino=1411353 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:06:51.755 28532 28532 W bash    : type=1400 audit(0.0:525830): avc: granted { execute_no_trans } for path="/data/data/com.termux/files/usr/bin/grep" dev="dm-10" ino=1411353 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:06:51.755 28532 28532 W grep    : type=1400 audit(0.0:525831): avc: granted { execute } for path="/data/data/com.termux/files/usr/bin/grep" dev="dm-10" ino=1411353 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:06:51.755 28530 28530 W bash    : type=1400 audit(0.0:525832): avc: granted { execute } for name="dash" dev="dm-10" ino=1409119 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:06:51.755 28530 28530 W bash    : type=1400 audit(0.0:525833): avc: granted { execute_no_trans } for path="/data/data/com.termux/files/usr/bin/dash" dev="dm-10" ino=1409119 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:06:51.755 28530 28530 W sh      : type=1400 audit(0.0:525834): avc: granted { execute } for path="/data/data/com.termux/files/usr/bin/dash" dev="dm-10" ino=1409119 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:06:51.765 28530 28530 W sh      : type=1400 audit(0.0:525835): avc: granted { execute } for path="/data/data/com.termux/files/usr/lib/libtermux-exec-ld-preload.so" dev="dm-10" ino=1411691 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:06:52.334 16153 17714 D BufferPoolAccessor2.0: bufferpool2 0x73bd8e8628 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:06:52.335 16153 17714 D BufferPoolAccessor2.0: evictor expired: 1, evicted: 1
+06-02 04:06:53.557 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus false
+06-02 04:07:28.813 16153 16239 D AppScoutStateMachine: 16153-ScoutStateMachinecreated
+06-02 04:07:28.833 16153 29042 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:07:28.833 16153 29042 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:07:28.834 16153 29042 I MediaCodec: init video box disabled for codec not supported
+06-02 04:07:28.834 16153 29044 D CCodec  : allocate(c2.android.vorbis.decoder)
+06-02 04:07:28.836 16153 29044 I CCodec  : setting up 'default' as default (vendor) store
+06-02 04:07:28.838 16153 29044 I CCodec  : Created component [c2.android.vorbis.decoder]
+06-02 04:07:28.838 16153 29044 D CCodecConfig: read media type: audio/vorbis
+06-02 04:07:28.841 16153 29044 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+06-02 04:07:28.842 16153 29044 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+06-02 04:07:28.842 16153 29044 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+06-02 04:07:28.842 16153 29044 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+06-02 04:07:28.843 16153 29044 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+06-02 04:07:28.843 16153 29044 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+06-02 04:07:28.843 16153 29044 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+06-02 04:07:28.843 16153 29044 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:07:28.843 16153 29044 D CCodecConfig: c2 config diff is Dict {
+06-02 04:07:28.843 16153 29044 D CCodecConfig:   c2::u32 coded.bitrate.value = 64000
+06-02 04:07:28.843 16153 29044 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 32768
+06-02 04:07:28.843 16153 29044 D CCodecConfig:   c2::u32 input.delay.value = 0
+06-02 04:07:28.843 16153 29044 D CCodecConfig:   string input.media-type.value = "audio/vorbis"
+06-02 04:07:28.843 16153 29044 D CCodecConfig:   string output.media-type.value = "audio/raw"
+06-02 04:07:28.843 16153 29044 D CCodecConfig:   c2::u32 raw.channel-count.value = 1
+06-02 04:07:28.843 16153 29044 D CCodecConfig:   c2::u32 raw.sample-rate.value = 48000
+06-02 04:07:28.843 16153 29044 D CCodecConfig: }
+06-02 04:07:28.845 16153 29044 D CCodec  : [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+06-02 04:07:28.845 16153 29044 D CCodecConfig: no c2 equivalents for durationUs
+06-02 04:07:28.845 16153 29044 D CCodecConfig: no c2 equivalents for track-id
+06-02 04:07:28.845 16153 29044 D CCodecConfig: no c2 equivalents for csd-1
+06-02 04:07:28.845 16153 29044 D CCodecConfig: no c2 equivalents for language
+06-02 04:07:28.845 16153 29044 D CCodecConfig: no c2 equivalents for file-format
+06-02 04:07:28.845 16153 29044 D CCodecConfig: no c2 equivalents for flags
+06-02 04:07:28.845 16153 29044 D CCodecConfig: config failed => CORRUPTED
+06-02 04:07:28.845 16153 29044 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 96000
+06-02 04:07:28.845 16153 29044 D CCodecConfig:   c2::u32 raw.sample-rate.value = 44100
+06-02 04:07:28.845 16153 29044 W Codec2Client: query -- param skipped: index = 1107298332.
+06-02 04:07:28.845 16153 29044 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+06-02 04:07:28.845 16153 29044 D CCodec  :   int32_t bitrate = 96000
+06-02 04:07:28.845 16153 29044 D CCodec  :   int32_t channel-count = 1
+06-02 04:07:28.845 16153 29044 D CCodec  :   int32_t max-input-size = 65307
+06-02 04:07:28.845 16153 29044 D CCodec  :   string mime = "audio/vorbis"
+06-02 04:07:28.845 16153 29044 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:07:28.845 16153 29044 D CCodec  : }
+06-02 04:07:28.845 16153 29044 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+06-02 04:07:28.845 16153 29044 D CCodec  :   int32_t channel-count = 1
+06-02 04:07:28.845 16153 29044 D CCodec  :   string mime = "audio/raw"
+06-02 04:07:28.845 16153 29044 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:07:28.845 16153 29044 D CCodec  :   int32_t android._config-pcm-encoding = 2
+06-02 04:07:28.845 16153 29044 D CCodec  : }
+06-02 04:07:28.845 16153 29044 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:07:28.847 16153 29044 W Codec2Client: query -- param skipped: index = 1342179345.
+06-02 04:07:28.847 16153 29044 W Codec2Client: query -- param skipped: index = 2415921170.
+06-02 04:07:28.849 16153 29044 D CCodecBufferChannel: [c2.android.vorbis.decoder#709] Created input block pool with allocatorID 16 => poolID 33 - OK (0)
+06-02 04:07:28.850 16153 17715 D BufferPoolAccessor2.0: bufferpool2 0x73c5237a28 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:07:28.850 16153 17715 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x73c5237a28 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 24, 79% unfetched
+06-02 04:07:28.850 16153 29044 I CCodecBufferChannel: [c2.android.vorbis.decoder#709] Created output block pool with allocatorID 16 => poolID 88 - OK
+06-02 04:07:28.850 16153 17715 D BufferPoolAccessor2.0: bufferpool2 0x73bd8e8628 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:07:28.850 16153 17715 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x73bd8e8628 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 24, 79% unfetched
+06-02 04:07:28.850 16153 29044 D CCodecBufferChannel: [c2.android.vorbis.decoder#709] Configured output block pool ids 88 => OK
+06-02 04:07:28.850 16153 29044 D CCodecBufferChannel: [c2.android.vorbis.decoder#709] start: updating output delay 0
+06-02 04:07:28.856 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus true
+06-02 04:07:28.880 16153 29044 W MediaCodec: onQueueInputBuffer,timeUs:-1 is invalid, changed to 0!
+06-02 04:07:28.881 16153 29044 D CCodecBufferChannel: [c2.android.vorbis.decoder#709] MediaCodec discarded an unknown buffer
+06-02 04:07:28.881 16153 29044 D CCodecBufferChannel: [c2.android.vorbis.decoder#709] MediaCodec discarded an unknown buffer
+06-02 04:07:28.881 16153 29044 D CCodecBufferChannel: [c2.android.vorbis.decoder#709] MediaCodec discarded an unknown buffer
+06-02 04:07:28.883 16153 29044 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+06-02 04:07:28.901 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:07:29.123 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:07:29.124 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:07:30.453 16153 16239 I OpenGLRenderer: Davey! duration=9223364875262ms; Flags=0, FrameTimelineVsyncId=385063, IntendedVsync=7161591383132, Vsync=7161591383132, InputEventId=0, HandleInputStart=7161594208412, AnimationStart=7161594212631, PerformTraversalsStart=7161594214819, DrawStart=7161594417475, FrameDeadline=7161607049798, FrameInterval=7161594171121, FrameStartTime=8333333, SyncQueued=7161598211277, SyncStart=7161598730652, IssueDrawCommandsStart=7161599010340, SwapBuffers=7161602115287, FrameCompleted=9223372036854775807, DequeueBufferDuration=40156, QueueBufferDuration=1504219, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7161604200965, DisplayPresentTime=0, 
+06-02 04:07:32.114 16153 17723 I OpenGLRenderer: Davey! duration=9223364873602ms; Flags=0, FrameTimelineVsyncId=385143, IntendedVsync=7163251704782, Vsync=7163251704782, InputEventId=0, HandleInputStart=7163255322474, AnimationStart=7163255329401, PerformTraversalsStart=7163255332162, DrawStart=7163255678099, FrameDeadline=7163275704781, FrameInterval=7163255265599, FrameStartTime=8333333, SyncQueued=7163257101328, SyncStart=7163257532943, IssueDrawCommandsStart=7163258045703, SwapBuffers=7163262988828, FrameCompleted=9223372036854775807, DequeueBufferDuration=102344, QueueBufferDuration=1660417, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7163265608776, DisplayPresentTime=0, 
+06-02 04:07:33.851 16153 17714 D BufferPoolAccessor2.0: bufferpool2 0x73c5237c28 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/24 (fetch/transfer)
+06-02 04:07:33.851 16153 17714 D BufferPoolAccessor2.0: evictor expired: 3, evicted: 1
+06-02 04:07:35.525 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus false
+06-02 04:08:07.573 16153 17723 D AppScoutStateMachine: 16153-ScoutStateMachinecreated
+06-02 04:08:07.585 16153 29170 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:08:07.585 16153 29170 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:08:07.586 16153 29170 I MediaCodec: init video box disabled for codec not supported
+06-02 04:08:07.586 16153 29172 D CCodec  : allocate(c2.android.vorbis.decoder)
+06-02 04:08:07.588 16153 29172 I CCodec  : setting up 'default' as default (vendor) store
+06-02 04:08:07.592 16153 29172 I CCodec  : Created component [c2.android.vorbis.decoder]
+06-02 04:08:07.592 16153 29172 D CCodecConfig: read media type: audio/vorbis
+06-02 04:08:07.593 16153 29172 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+06-02 04:08:07.593 16153 29172 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+06-02 04:08:07.593 16153 29172 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+06-02 04:08:07.593 16153 29172 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+06-02 04:08:07.593 16153 29172 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+06-02 04:08:07.593 16153 29172 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+06-02 04:08:07.593 16153 29172 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+06-02 04:08:07.594 16153 29172 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:08:07.594 16153 29172 D CCodecConfig: c2 config diff is Dict {
+06-02 04:08:07.594 16153 29172 D CCodecConfig:   c2::u32 coded.bitrate.value = 64000
+06-02 04:08:07.594 16153 29172 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 32768
+06-02 04:08:07.594 16153 29172 D CCodecConfig:   c2::u32 input.delay.value = 0
+06-02 04:08:07.594 16153 29172 D CCodecConfig:   string input.media-type.value = "audio/vorbis"
+06-02 04:08:07.594 16153 29172 D CCodecConfig:   string output.media-type.value = "audio/raw"
+06-02 04:08:07.594 16153 29172 D CCodecConfig:   c2::u32 raw.channel-count.value = 1
+06-02 04:08:07.594 16153 29172 D CCodecConfig:   c2::u32 raw.sample-rate.value = 48000
+06-02 04:08:07.594 16153 29172 D CCodecConfig: }
+06-02 04:08:07.596 16153 29172 D CCodec  : [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+06-02 04:08:07.596 16153 29172 D CCodecConfig: no c2 equivalents for durationUs
+06-02 04:08:07.596 16153 29172 D CCodecConfig: no c2 equivalents for track-id
+06-02 04:08:07.596 16153 29172 D CCodecConfig: no c2 equivalents for csd-1
+06-02 04:08:07.596 16153 29172 D CCodecConfig: no c2 equivalents for language
+06-02 04:08:07.596 16153 29172 D CCodecConfig: no c2 equivalents for file-format
+06-02 04:08:07.596 16153 29172 D CCodecConfig: no c2 equivalents for flags
+06-02 04:08:07.597 16153 29172 D CCodecConfig: config failed => CORRUPTED
+06-02 04:08:07.597 16153 29172 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 96000
+06-02 04:08:07.597 16153 29172 D CCodecConfig:   c2::u32 raw.sample-rate.value = 44100
+06-02 04:08:07.597 16153 29172 W Codec2Client: query -- param skipped: index = 1107298332.
+06-02 04:08:07.597 16153 29172 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+06-02 04:08:07.597 16153 29172 D CCodec  :   int32_t bitrate = 96000
+06-02 04:08:07.597 16153 29172 D CCodec  :   int32_t channel-count = 1
+06-02 04:08:07.597 16153 29172 D CCodec  :   int32_t max-input-size = 65307
+06-02 04:08:07.597 16153 29172 D CCodec  :   string mime = "audio/vorbis"
+06-02 04:08:07.597 16153 29172 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:08:07.597 16153 29172 D CCodec  : }
+06-02 04:08:07.597 16153 29172 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+06-02 04:08:07.597 16153 29172 D CCodec  :   int32_t channel-count = 1
+06-02 04:08:07.597 16153 29172 D CCodec  :   string mime = "audio/raw"
+06-02 04:08:07.597 16153 29172 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:08:07.597 16153 29172 D CCodec  :   int32_t android._config-pcm-encoding = 2
+06-02 04:08:07.597 16153 29172 D CCodec  : }
+06-02 04:08:07.598 16153 29172 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:08:07.601 16153 29172 W Codec2Client: query -- param skipped: index = 1342179345.
+06-02 04:08:07.601 16153 29172 W Codec2Client: query -- param skipped: index = 2415921170.
+06-02 04:08:07.602 16153 29172 D CCodecBufferChannel: [c2.android.vorbis.decoder#204] Created input block pool with allocatorID 16 => poolID 34 - OK (0)
+06-02 04:08:07.603 16153 17715 D BufferPoolAccessor2.0: bufferpool2 0x73c5237c28 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/24 (fetch/transfer)
+06-02 04:08:07.603 16153 17715 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x73c5237c28 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 24, 75% unfetched
+06-02 04:08:07.604 16153 29172 I CCodecBufferChannel: [c2.android.vorbis.decoder#204] Created output block pool with allocatorID 16 => poolID 89 - OK
+06-02 04:08:07.606 16153 29172 D CCodecBufferChannel: [c2.android.vorbis.decoder#204] Configured output block pool ids 89 => OK
+06-02 04:08:07.606 16153 29172 D CCodecBufferChannel: [c2.android.vorbis.decoder#204] start: updating output delay 0
+06-02 04:08:07.631 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus true
+06-02 04:08:07.641 16153 29172 W MediaCodec: onQueueInputBuffer,timeUs:-1 is invalid, changed to 0!
+06-02 04:08:07.642 16153 29172 D CCodecBufferChannel: [c2.android.vorbis.decoder#204] MediaCodec discarded an unknown buffer
+06-02 04:08:07.642 16153 29172 D CCodecBufferChannel: [c2.android.vorbis.decoder#204] MediaCodec discarded an unknown buffer
+06-02 04:08:07.642 16153 29172 D CCodecBufferChannel: [c2.android.vorbis.decoder#204] MediaCodec discarded an unknown buffer
+06-02 04:08:07.645 16153 29176 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+06-02 04:08:07.658 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:08:07.686 16153 17723 I OpenGLRenderer: Davey! duration=9223364838030ms; Flags=0, FrameTimelineVsyncId=388641, IntendedVsync=7198823941084, Vsync=7198823941084, InputEventId=0, HandleInputStart=7198824781575, AnimationStart=7198824782669, PerformTraversalsStart=7198824783242, DrawStart=7198835978346, FrameDeadline=7198839607750, FrameInterval=7198824770586, FrameStartTime=8333333, SyncQueued=7198837910690, SyncStart=7198837958242, IssueDrawCommandsStart=7198838078711, SwapBuffers=7198839151159, FrameCompleted=9223372036854775807, DequeueBufferDuration=15104, QueueBufferDuration=1601666, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7198841027357, DisplayPresentTime=0, 
+06-02 04:08:07.877 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:08:07.879 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:08:09.217 16153 16153 W Choreographer: Frame time is 0.060555 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.
+06-02 04:08:10.715 29189 29189 W bash    : type=1400 audit(0.0:531878): avc: granted { execute } for name="coreutils" dev="dm-10" ino=135136 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:08:10.725 29189 29189 W bash    : type=1400 audit(0.0:531879): avc: granted { execute } for name="coreutils" dev="dm-10" ino=135136 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:08:10.725 29189 29189 W bash    : type=1400 audit(0.0:531880): avc: granted { execute_no_trans } for path="/data/data/com.termux/files/usr/bin/coreutils" dev="dm-10" ino=135136 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:08:10.725 29189 29189 W tee     : type=1400 audit(0.0:531881): avc: granted { execute } for path="/data/data/com.termux/files/usr/bin/coreutils" dev="dm-10" ino=135136 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:08:10.745 29189 29189 W tee     : type=1400 audit(0.0:531882): avc: granted { execute } for path="/data/data/com.termux/files/usr/lib/libandroid-support.so" dev="dm-10" ino=1342473 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:08:12.604 16153 17714 D BufferPoolAccessor2.0: bufferpool2 0x73c523b428 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:08:12.605 16153 17714 D BufferPoolAccessor2.0: evictor expired: 2, evicted: 1
+06-02 04:08:18.470 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus false
+06-02 04:08:26.998 16153 16239 D AppScoutStateMachine: 16153-ScoutStateMachinecreated
+06-02 04:08:27.040 16153 29224 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:08:27.040 16153 29224 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:08:27.041 16153 29224 I MediaCodec: init video box disabled for codec not supported
+06-02 04:08:27.041 16153 29226 D CCodec  : allocate(c2.android.vorbis.decoder)
+06-02 04:08:27.043 16153 29226 I CCodec  : setting up 'default' as default (vendor) store
+06-02 04:08:27.046 16153 29226 I CCodec  : Created component [c2.android.vorbis.decoder]
+06-02 04:08:27.047 16153 29226 D CCodecConfig: read media type: audio/vorbis
+06-02 04:08:27.051 16153 29226 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+06-02 04:08:27.051 16153 29226 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+06-02 04:08:27.051 16153 29226 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+06-02 04:08:27.052 16153 29226 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+06-02 04:08:27.052 16153 29226 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+06-02 04:08:27.052 16153 29226 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+06-02 04:08:27.052 16153 29226 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+06-02 04:08:27.053 16153 29226 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:08:27.053 16153 29226 D CCodecConfig: c2 config diff is Dict {
+06-02 04:08:27.053 16153 29226 D CCodecConfig:   c2::u32 coded.bitrate.value = 64000
+06-02 04:08:27.053 16153 29226 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 32768
+06-02 04:08:27.053 16153 29226 D CCodecConfig:   c2::u32 input.delay.value = 0
+06-02 04:08:27.053 16153 29226 D CCodecConfig:   string input.media-type.value = "audio/vorbis"
+06-02 04:08:27.053 16153 29226 D CCodecConfig:   string output.media-type.value = "audio/raw"
+06-02 04:08:27.053 16153 29226 D CCodecConfig:   c2::u32 raw.channel-count.value = 1
+06-02 04:08:27.053 16153 29226 D CCodecConfig:   c2::u32 raw.sample-rate.value = 48000
+06-02 04:08:27.053 16153 29226 D CCodecConfig: }
+06-02 04:08:27.055 16153 29226 D CCodec  : [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+06-02 04:08:27.055 16153 29226 D CCodecConfig: no c2 equivalents for durationUs
+06-02 04:08:27.055 16153 29226 D CCodecConfig: no c2 equivalents for track-id
+06-02 04:08:27.055 16153 29226 D CCodecConfig: no c2 equivalents for csd-1
+06-02 04:08:27.055 16153 29226 D CCodecConfig: no c2 equivalents for language
+06-02 04:08:27.055 16153 29226 D CCodecConfig: no c2 equivalents for file-format
+06-02 04:08:27.055 16153 29226 D CCodecConfig: no c2 equivalents for flags
+06-02 04:08:27.056 16153 29226 D CCodecConfig: config failed => CORRUPTED
+06-02 04:08:27.056 16153 29226 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 96000
+06-02 04:08:27.056 16153 29226 D CCodecConfig:   c2::u32 raw.sample-rate.value = 44100
+06-02 04:08:27.056 16153 29226 W Codec2Client: query -- param skipped: index = 1107298332.
+06-02 04:08:27.056 16153 29226 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+06-02 04:08:27.056 16153 29226 D CCodec  :   int32_t bitrate = 96000
+06-02 04:08:27.056 16153 29226 D CCodec  :   int32_t channel-count = 1
+06-02 04:08:27.056 16153 29226 D CCodec  :   int32_t max-input-size = 65307
+06-02 04:08:27.056 16153 29226 D CCodec  :   string mime = "audio/vorbis"
+06-02 04:08:27.056 16153 29226 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:08:27.056 16153 29226 D CCodec  : }
+06-02 04:08:27.056 16153 29226 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+06-02 04:08:27.056 16153 29226 D CCodec  :   int32_t channel-count = 1
+06-02 04:08:27.056 16153 29226 D CCodec  :   string mime = "audio/raw"
+06-02 04:08:27.056 16153 29226 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:08:27.056 16153 29226 D CCodec  :   int32_t android._config-pcm-encoding = 2
+06-02 04:08:27.056 16153 29226 D CCodec  : }
+06-02 04:08:27.056 16153 29226 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:08:27.058 16153 29226 W Codec2Client: query -- param skipped: index = 1342179345.
+06-02 04:08:27.058 16153 29226 W Codec2Client: query -- param skipped: index = 2415921170.
+06-02 04:08:27.059 16153 29226 D CCodecBufferChannel: [c2.android.vorbis.decoder#731] Created input block pool with allocatorID 16 => poolID 35 - OK (0)
+06-02 04:08:27.059 16153 17715 D BufferPoolAccessor2.0: bufferpool2 0x73c523b428 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:08:27.060 16153 17715 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x73c523b428 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 24, 79% unfetched
+06-02 04:08:27.060 16153 29226 I CCodecBufferChannel: [c2.android.vorbis.decoder#731] Created output block pool with allocatorID 16 => poolID 90 - OK
+06-02 04:08:27.060 16153 29226 D CCodecBufferChannel: [c2.android.vorbis.decoder#731] Configured output block pool ids 90 => OK
+06-02 04:08:27.060 16153 29226 D CCodecBufferChannel: [c2.android.vorbis.decoder#731] start: updating output delay 0
+06-02 04:08:27.072 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus true
+06-02 04:08:27.087 16153 29226 W MediaCodec: onQueueInputBuffer,timeUs:-1 is invalid, changed to 0!
+06-02 04:08:27.090 16153 29226 D CCodecBufferChannel: [c2.android.vorbis.decoder#731] MediaCodec discarded an unknown buffer
+06-02 04:08:27.090 16153 29226 D CCodecBufferChannel: [c2.android.vorbis.decoder#731] MediaCodec discarded an unknown buffer
+06-02 04:08:27.090 16153 29226 D CCodecBufferChannel: [c2.android.vorbis.decoder#731] MediaCodec discarded an unknown buffer
+06-02 04:08:27.092 16153 29226 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+06-02 04:08:27.124 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:08:27.324 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:08:27.326 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:08:28.657 16153 22926 I OpenGLRenderer: Davey! duration=9223364817064ms; Flags=0, FrameTimelineVsyncId=390050, IntendedVsync=7219790368898, Vsync=7219790368898, InputEventId=665563106, HandleInputStart=7219791548234, AnimationStart=7219791552557, PerformTraversalsStart=7219791554744, DrawStart=7219791830890, FrameDeadline=7219806035564, FrameInterval=7219791506567, FrameStartTime=8333333, SyncQueued=7219796939744, SyncStart=7219797165057, IssueDrawCommandsStart=7219797453755, SwapBuffers=7219801162140, FrameCompleted=9223372036854775807, DequeueBufferDuration=40729, QueueBufferDuration=1354948, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7219803103182, DisplayPresentTime=0, 
+06-02 04:08:28.713 16153 17694 W RenderInspector: DequeueBuffer time out on com.termux/com.termux.app.TermuxActivity, count=1, avg=11 ms, max=11 ms.
+06-02 04:08:28.809 16153 16153 W Choreographer: Frame time is 0.065933 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.
+06-02 04:08:31.185 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:08:31.199 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:08:32.062 16153 17714 D BufferPoolAccessor2.0: bufferpool2 0x73c5248028 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:08:32.063 16153 17714 D BufferPoolAccessor2.0: evictor expired: 2, evicted: 1
+06-02 04:08:39.355 16153 22926 I OpenGLRenderer: Davey! duration=9223364806363ms; Flags=0, FrameTimelineVsyncId=390189, IntendedVsync=7230491524401, Vsync=7230491524401, InputEventId=-1059489340, HandleInputStart=7230493374011, AnimationStart=7230493381772, PerformTraversalsStart=7230493386147, DrawStart=7230493752917, FrameDeadline=7230515524400, FrameInterval=7230493311199, FrameStartTime=8333333, SyncQueued=7230504028022, SyncStart=7230504182136, IssueDrawCommandsStart=7230504495574, SwapBuffers=7230506987344, FrameCompleted=9223372036854775807, DequeueBufferDuration=28021, QueueBufferDuration=872396, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7230508450261, DisplayPresentTime=0, 
+06-02 04:08:52.246 16153 16239 I OpenGLRenderer: Davey! duration=9223364793469ms; Flags=0, FrameTimelineVsyncId=390322, IntendedVsync=7243385519708, Vsync=7243385519708, InputEventId=-849042262, HandleInputStart=7243387655985, AnimationStart=7243387659110, PerformTraversalsStart=7243387660673, DrawStart=7243387837652, FrameDeadline=7243409519707, FrameInterval=7243387627600, FrameStartTime=8333333, SyncQueued=7243391509058, SyncStart=7243391617079, IssueDrawCommandsStart=7243392045465, SwapBuffers=7243395023954, FrameCompleted=9223372036854775807, DequeueBufferDuration=50781, QueueBufferDuration=1094583, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7243396875985, DisplayPresentTime=0, 
+06-02 04:08:56.149 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus false
+06-02 04:09:10.441 16153 29680 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:09:10.442 16153 29680 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:09:10.444 16153 29680 I MediaCodec: init video box disabled for codec not supported
+06-02 04:09:10.447 16153 29682 D CCodec  : allocate(c2.android.vorbis.decoder)
+06-02 04:09:10.453 16153 29682 I CCodec  : setting up 'default' as default (vendor) store
+06-02 04:09:10.456 16153 29682 I CCodec  : Created component [c2.android.vorbis.decoder]
+06-02 04:09:10.456 16153 29682 D CCodecConfig: read media type: audio/vorbis
+06-02 04:09:10.457 16153 29682 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+06-02 04:09:10.457 16153 29682 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+06-02 04:09:10.457 16153 29682 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+06-02 04:09:10.457 16153 29682 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+06-02 04:09:10.457 16153 29682 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+06-02 04:09:10.458 16153 29682 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+06-02 04:09:10.458 16153 29682 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+06-02 04:09:10.460 16153 29682 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:09:10.460 16153 29682 D CCodecConfig: c2 config diff is Dict {
+06-02 04:09:10.460 16153 29682 D CCodecConfig:   c2::u32 coded.bitrate.value = 64000
+06-02 04:09:10.460 16153 29682 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 32768
+06-02 04:09:10.460 16153 29682 D CCodecConfig:   c2::u32 input.delay.value = 0
+06-02 04:09:10.460 16153 29682 D CCodecConfig:   string input.media-type.value = "audio/vorbis"
+06-02 04:09:10.460 16153 29682 D CCodecConfig:   string output.media-type.value = "audio/raw"
+06-02 04:09:10.460 16153 29682 D CCodecConfig:   c2::u32 raw.channel-count.value = 1
+06-02 04:09:10.460 16153 29682 D CCodecConfig:   c2::u32 raw.sample-rate.value = 48000
+06-02 04:09:10.460 16153 29682 D CCodecConfig: }
+06-02 04:09:10.460 16153 16239 D AppScoutStateMachine: 16153-ScoutStateMachinecreated
+06-02 04:09:10.462 16153 29682 D CCodec  : [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+06-02 04:09:10.462 16153 29682 D CCodecConfig: no c2 equivalents for durationUs
+06-02 04:09:10.462 16153 29682 D CCodecConfig: no c2 equivalents for track-id
+06-02 04:09:10.462 16153 29682 D CCodecConfig: no c2 equivalents for csd-1
+06-02 04:09:10.462 16153 29682 D CCodecConfig: no c2 equivalents for language
+06-02 04:09:10.462 16153 29682 D CCodecConfig: no c2 equivalents for file-format
+06-02 04:09:10.462 16153 29682 D CCodecConfig: no c2 equivalents for flags
+06-02 04:09:10.462 16153 29682 D CCodecConfig: config failed => CORRUPTED
+06-02 04:09:10.462 16153 29682 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 96000
+06-02 04:09:10.462 16153 29682 D CCodecConfig:   c2::u32 raw.sample-rate.value = 44100
+06-02 04:09:10.463 16153 29682 W Codec2Client: query -- param skipped: index = 1107298332.
+06-02 04:09:10.463 16153 29682 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+06-02 04:09:10.463 16153 29682 D CCodec  :   int32_t bitrate = 96000
+06-02 04:09:10.463 16153 29682 D CCodec  :   int32_t channel-count = 1
+06-02 04:09:10.463 16153 29682 D CCodec  :   int32_t max-input-size = 65307
+06-02 04:09:10.463 16153 29682 D CCodec  :   string mime = "audio/vorbis"
+06-02 04:09:10.463 16153 29682 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:09:10.463 16153 29682 D CCodec  : }
+06-02 04:09:10.463 16153 29682 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+06-02 04:09:10.463 16153 29682 D CCodec  :   int32_t channel-count = 1
+06-02 04:09:10.463 16153 29682 D CCodec  :   string mime = "audio/raw"
+06-02 04:09:10.463 16153 29682 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:09:10.463 16153 29682 D CCodec  :   int32_t android._config-pcm-encoding = 2
+06-02 04:09:10.463 16153 29682 D CCodec  : }
+06-02 04:09:10.463 16153 29682 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:09:10.464 16153 29682 W Codec2Client: query -- param skipped: index = 1342179345.
+06-02 04:09:10.464 16153 29682 W Codec2Client: query -- param skipped: index = 2415921170.
+06-02 04:09:10.464 16153 29682 D CCodecBufferChannel: [c2.android.vorbis.decoder#373] Created input block pool with allocatorID 16 => poolID 36 - OK (0)
+06-02 04:09:10.465 16153 17715 D BufferPoolAccessor2.0: bufferpool2 0x73c5248028 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:09:10.465 16153 17715 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x73c5248028 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 24, 79% unfetched
+06-02 04:09:10.466 16153 29682 I CCodecBufferChannel: [c2.android.vorbis.decoder#373] Created output block pool with allocatorID 16 => poolID 91 - OK
+06-02 04:09:10.466 16153 29682 D CCodecBufferChannel: [c2.android.vorbis.decoder#373] Configured output block pool ids 91 => OK
+06-02 04:09:10.466 16153 29682 D CCodecBufferChannel: [c2.android.vorbis.decoder#373] start: updating output delay 0
+06-02 04:09:10.498 16153 29682 W MediaCodec: onQueueInputBuffer,timeUs:-1 is invalid, changed to 0!
+06-02 04:09:10.502 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus true
+06-02 04:09:10.503 16153 29682 D CCodecBufferChannel: [c2.android.vorbis.decoder#373] MediaCodec discarded an unknown buffer
+06-02 04:09:10.503 16153 29682 D CCodecBufferChannel: [c2.android.vorbis.decoder#373] MediaCodec discarded an unknown buffer
+06-02 04:09:10.503 16153 29682 D CCodecBufferChannel: [c2.android.vorbis.decoder#373] MediaCodec discarded an unknown buffer
+06-02 04:09:10.504 16153 29682 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+06-02 04:09:10.541 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:09:10.730 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:09:10.731 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:09:12.096 16153 22926 I OpenGLRenderer: Davey! duration=9223364773619ms; Flags=0, FrameTimelineVsyncId=391031, IntendedVsync=7263234142856, Vsync=7263234142856, InputEventId=0, HandleInputStart=7263238762488, AnimationStart=7263238766759, PerformTraversalsStart=7263238768947, DrawStart=7263238991499, FrameDeadline=7263249809522, FrameInterval=7263238717853, FrameStartTime=8333333, SyncQueued=7263243542540, SyncStart=7263244322436, IssueDrawCommandsStart=7263244601342, SwapBuffers=7263247410405, FrameCompleted=9223372036854775807, DequeueBufferDuration=39636, QueueBufferDuration=2114010, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7263250317801, DisplayPresentTime=0, 
+06-02 04:09:15.471 16153 17714 D BufferPoolAccessor2.0: bufferpool2 0x73bd818628 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:09:15.471 16153 17714 D BufferPoolAccessor2.0: evictor expired: 2, evicted: 1
+06-02 04:09:15.509 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus false
+06-02 04:09:32.555 16153 29740 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:09:32.555 16153 29740 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:09:32.557 16153 29740 I MediaCodec: init video box disabled for codec not supported
+06-02 04:09:32.559 16153 29742 D CCodec  : allocate(c2.android.vorbis.decoder)
+06-02 04:09:32.562 16153 17723 D AppScoutStateMachine: 16153-ScoutStateMachinecreated
+06-02 04:09:32.570 16153 29742 I CCodec  : setting up 'default' as default (vendor) store
+06-02 04:09:32.573 16153 29742 I CCodec  : Created component [c2.android.vorbis.decoder]
+06-02 04:09:32.574 16153 29742 D CCodecConfig: read media type: audio/vorbis
+06-02 04:09:32.576 16153 29742 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+06-02 04:09:32.576 16153 29742 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+06-02 04:09:32.576 16153 29742 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+06-02 04:09:32.576 16153 29742 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+06-02 04:09:32.576 16153 29742 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+06-02 04:09:32.576 16153 29742 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+06-02 04:09:32.577 16153 29742 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+06-02 04:09:32.578 16153 29742 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:09:32.578 16153 29742 D CCodecConfig: c2 config diff is Dict {
+06-02 04:09:32.578 16153 29742 D CCodecConfig:   c2::u32 coded.bitrate.value = 64000
+06-02 04:09:32.578 16153 29742 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 32768
+06-02 04:09:32.578 16153 29742 D CCodecConfig:   c2::u32 input.delay.value = 0
+06-02 04:09:32.578 16153 29742 D CCodecConfig:   string input.media-type.value = "audio/vorbis"
+06-02 04:09:32.578 16153 29742 D CCodecConfig:   string output.media-type.value = "audio/raw"
+06-02 04:09:32.578 16153 29742 D CCodecConfig:   c2::u32 raw.channel-count.value = 1
+06-02 04:09:32.578 16153 29742 D CCodecConfig:   c2::u32 raw.sample-rate.value = 48000
+06-02 04:09:32.578 16153 29742 D CCodecConfig: }
+06-02 04:09:32.585 16153 29742 D CCodec  : [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+06-02 04:09:32.585 16153 29742 D CCodecConfig: no c2 equivalents for durationUs
+06-02 04:09:32.585 16153 29742 D CCodecConfig: no c2 equivalents for track-id
+06-02 04:09:32.585 16153 29742 D CCodecConfig: no c2 equivalents for csd-1
+06-02 04:09:32.585 16153 29742 D CCodecConfig: no c2 equivalents for language
+06-02 04:09:32.585 16153 29742 D CCodecConfig: no c2 equivalents for file-format
+06-02 04:09:32.585 16153 29742 D CCodecConfig: no c2 equivalents for flags
+06-02 04:09:32.585 16153 29742 D CCodecConfig: config failed => CORRUPTED
+06-02 04:09:32.586 16153 29742 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 96000
+06-02 04:09:32.586 16153 29742 D CCodecConfig:   c2::u32 raw.sample-rate.value = 44100
+06-02 04:09:32.586 16153 29742 W Codec2Client: query -- param skipped: index = 1107298332.
+06-02 04:09:32.586 16153 29742 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+06-02 04:09:32.586 16153 29742 D CCodec  :   int32_t bitrate = 96000
+06-02 04:09:32.586 16153 29742 D CCodec  :   int32_t channel-count = 1
+06-02 04:09:32.586 16153 29742 D CCodec  :   int32_t max-input-size = 65307
+06-02 04:09:32.586 16153 29742 D CCodec  :   string mime = "audio/vorbis"
+06-02 04:09:32.586 16153 29742 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:09:32.586 16153 29742 D CCodec  : }
+06-02 04:09:32.586 16153 29742 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+06-02 04:09:32.586 16153 29742 D CCodec  :   int32_t channel-count = 1
+06-02 04:09:32.586 16153 29742 D CCodec  :   string mime = "audio/raw"
+06-02 04:09:32.586 16153 29742 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:09:32.586 16153 29742 D CCodec  :   int32_t android._config-pcm-encoding = 2
+06-02 04:09:32.586 16153 29742 D CCodec  : }
+06-02 04:09:32.586 16153 29742 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:09:32.587 16153 29742 W Codec2Client: query -- param skipped: index = 1342179345.
+06-02 04:09:32.587 16153 29742 W Codec2Client: query -- param skipped: index = 2415921170.
+06-02 04:09:32.589 16153 29742 D CCodecBufferChannel: [c2.android.vorbis.decoder#110] Created input block pool with allocatorID 16 => poolID 37 - OK (0)
+06-02 04:09:32.590 16153 17715 D BufferPoolAccessor2.0: bufferpool2 0x73bd818628 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:09:32.591 16153 17715 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x73bd818628 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 24, 79% unfetched
+06-02 04:09:32.591 16153 29742 I CCodecBufferChannel: [c2.android.vorbis.decoder#110] Created output block pool with allocatorID 16 => poolID 92 - OK
+06-02 04:09:32.591 16153 29742 D CCodecBufferChannel: [c2.android.vorbis.decoder#110] Configured output block pool ids 92 => OK
+06-02 04:09:32.591 16153 29742 D CCodecBufferChannel: [c2.android.vorbis.decoder#110] start: updating output delay 0
+06-02 04:09:32.621 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus true
+06-02 04:09:32.628 16153 29742 W MediaCodec: onQueueInputBuffer,timeUs:-1 is invalid, changed to 0!
+06-02 04:09:32.631 16153 29742 D CCodecBufferChannel: [c2.android.vorbis.decoder#110] MediaCodec discarded an unknown buffer
+06-02 04:09:32.631 16153 29742 D CCodecBufferChannel: [c2.android.vorbis.decoder#110] MediaCodec discarded an unknown buffer
+06-02 04:09:32.632 16153 29742 D CCodecBufferChannel: [c2.android.vorbis.decoder#110] MediaCodec discarded an unknown buffer
+06-02 04:09:32.639 16153 29742 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+06-02 04:09:32.693 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:09:32.841 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:09:32.844 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:09:34.165 16153 17723 I OpenGLRenderer: Davey! duration=9223364751551ms; Flags=0, FrameTimelineVsyncId=392010, IntendedVsync=7285303189239, Vsync=7285303189239, InputEventId=0, HandleInputStart=7285305183938, AnimationStart=7285305188469, PerformTraversalsStart=7285305190657, DrawStart=7285305369251, FrameDeadline=7285318855905, FrameInterval=7285305145188, FrameStartTime=8333333, SyncQueued=7285309164667, SyncStart=7285309686074, IssueDrawCommandsStart=7285309945657, SwapBuffers=7285312799980, FrameCompleted=9223372036854775807, DequeueBufferDuration=83958, QueueBufferDuration=986875, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7285314371334, DisplayPresentTime=0, 
+06-02 04:09:37.598 16153 17714 D BufferPoolAccessor2.0: bufferpool2 0x7373206828 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:09:37.598 16153 17714 D BufferPoolAccessor2.0: evictor expired: 2, evicted: 1
+06-02 04:09:38.637 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus false
+06-02 04:10:21.922 16153 17723 D AppScoutStateMachine: 16153-ScoutStateMachinecreated
+06-02 04:10:21.946 16153 30087 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:10:21.946 16153 30087 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:10:21.948 16153 30087 I MediaCodec: init video box disabled for codec not supported
+06-02 04:10:21.949 16153 30089 D CCodec  : allocate(c2.android.vorbis.decoder)
+06-02 04:10:21.953 16153 30089 I CCodec  : setting up 'default' as default (vendor) store
+06-02 04:10:21.954 16153 30089 I CCodec  : Created component [c2.android.vorbis.decoder]
+06-02 04:10:21.954 16153 30089 D CCodecConfig: read media type: audio/vorbis
+06-02 04:10:21.957 16153 30089 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+06-02 04:10:21.957 16153 30089 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+06-02 04:10:21.957 16153 30089 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+06-02 04:10:21.957 16153 30089 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+06-02 04:10:21.957 16153 30089 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+06-02 04:10:21.957 16153 30089 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+06-02 04:10:21.957 16153 30089 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+06-02 04:10:21.958 16153 30089 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:10:21.958 16153 30089 D CCodecConfig: c2 config diff is Dict {
+06-02 04:10:21.958 16153 30089 D CCodecConfig:   c2::u32 coded.bitrate.value = 64000
+06-02 04:10:21.958 16153 30089 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 32768
+06-02 04:10:21.958 16153 30089 D CCodecConfig:   c2::u32 input.delay.value = 0
+06-02 04:10:21.958 16153 30089 D CCodecConfig:   string input.media-type.value = "audio/vorbis"
+06-02 04:10:21.958 16153 30089 D CCodecConfig:   string output.media-type.value = "audio/raw"
+06-02 04:10:21.958 16153 30089 D CCodecConfig:   c2::u32 raw.channel-count.value = 1
+06-02 04:10:21.958 16153 30089 D CCodecConfig:   c2::u32 raw.sample-rate.value = 48000
+06-02 04:10:21.958 16153 30089 D CCodecConfig: }
+06-02 04:10:21.959 16153 30089 D CCodec  : [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+06-02 04:10:21.959 16153 30089 D CCodecConfig: no c2 equivalents for durationUs
+06-02 04:10:21.959 16153 30089 D CCodecConfig: no c2 equivalents for track-id
+06-02 04:10:21.959 16153 30089 D CCodecConfig: no c2 equivalents for csd-1
+06-02 04:10:21.959 16153 30089 D CCodecConfig: no c2 equivalents for language
+06-02 04:10:21.959 16153 30089 D CCodecConfig: no c2 equivalents for file-format
+06-02 04:10:21.959 16153 30089 D CCodecConfig: no c2 equivalents for flags
+06-02 04:10:21.960 16153 30089 D CCodecConfig: config failed => CORRUPTED
+06-02 04:10:21.960 16153 30089 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 96000
+06-02 04:10:21.960 16153 30089 D CCodecConfig:   c2::u32 raw.sample-rate.value = 44100
+06-02 04:10:21.960 16153 30089 W Codec2Client: query -- param skipped: index = 1107298332.
+06-02 04:10:21.960 16153 30089 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+06-02 04:10:21.960 16153 30089 D CCodec  :   int32_t bitrate = 96000
+06-02 04:10:21.960 16153 30089 D CCodec  :   int32_t channel-count = 1
+06-02 04:10:21.960 16153 30089 D CCodec  :   int32_t max-input-size = 65307
+06-02 04:10:21.960 16153 30089 D CCodec  :   string mime = "audio/vorbis"
+06-02 04:10:21.960 16153 30089 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:10:21.960 16153 30089 D CCodec  : }
+06-02 04:10:21.960 16153 30089 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+06-02 04:10:21.960 16153 30089 D CCodec  :   int32_t channel-count = 1
+06-02 04:10:21.960 16153 30089 D CCodec  :   string mime = "audio/raw"
+06-02 04:10:21.960 16153 30089 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:10:21.960 16153 30089 D CCodec  :   int32_t android._config-pcm-encoding = 2
+06-02 04:10:21.960 16153 30089 D CCodec  : }
+06-02 04:10:21.960 16153 30089 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:10:21.961 16153 30089 W Codec2Client: query -- param skipped: index = 1342179345.
+06-02 04:10:21.961 16153 30089 W Codec2Client: query -- param skipped: index = 2415921170.
+06-02 04:10:21.962 16153 30089 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] Created input block pool with allocatorID 16 => poolID 38 - OK (0)
+06-02 04:10:21.963 16153 17715 D BufferPoolAccessor2.0: bufferpool2 0x7373206828 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/24 (fetch/transfer)
+06-02 04:10:21.963 16153 17715 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x7373206828 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 24, 79% unfetched
+06-02 04:10:21.963 16153 30089 I CCodecBufferChannel: [c2.android.vorbis.decoder#933] Created output block pool with allocatorID 16 => poolID 93 - OK
+06-02 04:10:21.963 16153 30089 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] Configured output block pool ids 93 => OK
+06-02 04:10:21.963 16153 30089 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] start: updating output delay 0
+06-02 04:10:21.980 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus true
+06-02 04:10:21.987 16153 30089 W MediaCodec: onQueueInputBuffer,timeUs:-1 is invalid, changed to 0!
+06-02 04:10:21.991 16153 30089 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] MediaCodec discarded an unknown buffer
+06-02 04:10:21.991 16153 30089 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] MediaCodec discarded an unknown buffer
+06-02 04:10:21.992 16153 30089 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+06-02 04:10:22.009 16153 22926 I OpenGLRenderer: Davey! duration=9223364703708ms; Flags=0, FrameTimelineVsyncId=396552, IntendedVsync=7333146623090, Vsync=7333146623090, InputEventId=0, HandleInputStart=7333146984545, AnimationStart=7333146986420, PerformTraversalsStart=7333146987514, DrawStart=7333147114962, FrameDeadline=7333162289756, FrameInterval=7333146963347, FrameStartTime=8333333, SyncQueued=7333153041628, SyncStart=7333153090326, IssueDrawCommandsStart=7333153215326, SwapBuffers=7333158832618, FrameCompleted=9223372036854775807, DequeueBufferDuration=14375, QueueBufferDuration=386771, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7333159467253, DisplayPresentTime=0, 
+06-02 04:10:22.031 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:10:22.237 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:10:22.239 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:10:23.568 16153 17694 W RenderInspector: QueueBuffer time out on com.termux/com.termux.app.TermuxActivity, count=1, avg=8 ms, max=8 ms.
+06-02 04:10:26.964 16153 17714 D BufferPoolAccessor2.0: bufferpool2 0x73c52a6028 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/24 (fetch/transfer)
+06-02 04:10:26.964 16153 17714 D BufferPoolAccessor2.0: evictor expired: 2, evicted: 1
+06-02 04:10:37.895 30127 30127 W bash    : type=1400 audit(0.0:536820): avc: granted { execute } for name="logcat" dev="dm-10" ino=1411707 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:10:37.895 30128 30128 W bash    : type=1400 audit(0.0:536821): avc: granted { execute } for name="coreutils" dev="dm-10" ino=135136 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:10:37.895 30129 30129 W bash    : type=1400 audit(0.0:536822): avc: granted { execute } for name="grep" dev="dm-10" ino=1411353 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:10:37.895 30128 30128 W bash    : type=1400 audit(0.0:536823): avc: granted { execute } for name="coreutils" dev="dm-10" ino=135136 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:10:37.895 30128 30128 W bash    : type=1400 audit(0.0:536824): avc: granted { execute_no_trans } for path="/data/data/com.termux/files/usr/bin/coreutils" dev="dm-10" ino=135136 scontext=u:r:untrusted_app_27:s0:c152,c258,c512,c768 tcontext=u:object_r:app_data_file:s0:c152,c258,c512,c768 tclass=file app=com.termux
+06-02 04:10:39.728 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus false
+06-02 04:10:59.641 16153 19860 D AppScoutStateMachine: 16153-ScoutStateMachinecreated
+06-02 04:10:59.653 16153 30359 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:10:59.653 16153 30359 D MediaCodecList: codecHandlesFormat: no format, so no extra checks
+06-02 04:10:59.653 16153 30359 I MediaCodec: init video box disabled for codec not supported
+06-02 04:10:59.654 16153 30361 D CCodec  : allocate(c2.android.vorbis.decoder)
+06-02 04:10:59.655 16153 30361 I CCodec  : setting up 'default' as default (vendor) store
+06-02 04:10:59.657 16153 30361 I CCodec  : Created component [c2.android.vorbis.decoder]
+06-02 04:10:59.657 16153 30361 D CCodecConfig: read media type: audio/vorbis
+06-02 04:10:59.659 16153 30361 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.max-count.values
+06-02 04:10:59.660 16153 30361 D ReflectedParamUpdater: extent() != 1 for single value type: output.subscribed-indices.values
+06-02 04:10:59.660 16153 30361 D ReflectedParamUpdater: extent() != 1 for single value type: input.buffers.allocator-ids.values
+06-02 04:10:59.660 16153 30361 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.allocator-ids.values
+06-02 04:10:59.660 16153 30361 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.allocator-ids.values
+06-02 04:10:59.660 16153 30361 D ReflectedParamUpdater: extent() != 1 for single value type: output.buffers.pool-ids.values
+06-02 04:10:59.660 16153 30361 D ReflectedParamUpdater: extent() != 1 for single value type: algo.buffers.pool-ids.values
+06-02 04:10:59.661 16153 30361 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:10:59.661 16153 30361 D CCodecConfig: c2 config diff is Dict {
+06-02 04:10:59.661 16153 30361 D CCodecConfig:   c2::u32 coded.bitrate.value = 64000
+06-02 04:10:59.661 16153 30361 D CCodecConfig:   c2::u32 input.buffers.max-size.value = 32768
+06-02 04:10:59.661 16153 30361 D CCodecConfig:   c2::u32 input.delay.value = 0
+06-02 04:10:59.661 16153 30361 D CCodecConfig:   string input.media-type.value = "audio/vorbis"
+06-02 04:10:59.661 16153 30361 D CCodecConfig:   string output.media-type.value = "audio/raw"
+06-02 04:10:59.661 16153 30361 D CCodecConfig:   c2::u32 raw.channel-count.value = 1
+06-02 04:10:59.661 16153 30361 D CCodecConfig:   c2::u32 raw.sample-rate.value = 48000
+06-02 04:10:59.661 16153 30361 D CCodecConfig: }
+06-02 04:10:59.662 16153 30361 D CCodec  : [c2.android.vorbis.decoder] buffers are bound to CCodec for this session
+06-02 04:10:59.662 16153 30361 D CCodecConfig: no c2 equivalents for durationUs
+06-02 04:10:59.662 16153 30361 D CCodecConfig: no c2 equivalents for track-id
+06-02 04:10:59.662 16153 30361 D CCodecConfig: no c2 equivalents for csd-1
+06-02 04:10:59.662 16153 30361 D CCodecConfig: no c2 equivalents for language
+06-02 04:10:59.662 16153 30361 D CCodecConfig: no c2 equivalents for file-format
+06-02 04:10:59.662 16153 30361 D CCodecConfig: no c2 equivalents for flags
+06-02 04:10:59.662 16153 30361 D CCodecConfig: config failed => CORRUPTED
+06-02 04:10:59.662 16153 30361 D CCodecConfig: c2 config diff is   c2::u32 coded.bitrate.value = 96000
+06-02 04:10:59.662 16153 30361 D CCodecConfig:   c2::u32 raw.sample-rate.value = 44100
+06-02 04:10:59.662 16153 30361 W Codec2Client: query -- param skipped: index = 1107298332.
+06-02 04:10:59.662 16153 30361 D CCodec  : setup formats input: AMessage(what = 0x00000000) = {
+06-02 04:10:59.662 16153 30361 D CCodec  :   int32_t bitrate = 96000
+06-02 04:10:59.662 16153 30361 D CCodec  :   int32_t channel-count = 1
+06-02 04:10:59.662 16153 30361 D CCodec  :   int32_t max-input-size = 65307
+06-02 04:10:59.662 16153 30361 D CCodec  :   string mime = "audio/vorbis"
+06-02 04:10:59.662 16153 30361 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:10:59.662 16153 30361 D CCodec  : }
+06-02 04:10:59.663 16153 30361 D CCodec  : setup formats output: AMessage(what = 0x00000000) = {
+06-02 04:10:59.663 16153 30361 D CCodec  :   int32_t channel-count = 1
+06-02 04:10:59.663 16153 30361 D CCodec  :   string mime = "audio/raw"
+06-02 04:10:59.663 16153 30361 D CCodec  :   int32_t sample-rate = 44100
+06-02 04:10:59.663 16153 30361 D CCodec  :   int32_t android._config-pcm-encoding = 2
+06-02 04:10:59.663 16153 30361 D CCodec  : }
+06-02 04:10:59.663 16153 30361 I CCodecConfig: query failed after returning 7 values (BAD_INDEX)
+06-02 04:10:59.663 16153 30361 W Codec2Client: query -- param skipped: index = 1342179345.
+06-02 04:10:59.663 16153 30361 W Codec2Client: query -- param skipped: index = 2415921170.
+06-02 04:10:59.664 16153 30361 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] Created input block pool with allocatorID 16 => poolID 39 - OK (0)
+06-02 04:10:59.664 16153 17715 D BufferPoolAccessor2.0: bufferpool2 0x73c52a6028 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/24 (fetch/transfer)
+06-02 04:10:59.664 16153 17715 D BufferPoolAccessor2.0: Destruction - bufferpool2 0x73c52a6028 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 24, 75% unfetched
+06-02 04:10:59.664 16153 30361 I CCodecBufferChannel: [c2.android.vorbis.decoder#933] Created output block pool with allocatorID 16 => poolID 94 - OK
+06-02 04:10:59.665 16153 30361 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] Configured output block pool ids 94 => OK
+06-02 04:10:59.665 16153 30361 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] start: updating output delay 0
+06-02 04:10:59.701 16153 16153 D DecorView[]: onWindowFocusChanged hasWindowFocus true
+06-02 04:10:59.702 16153 30361 W MediaCodec: onQueueInputBuffer,timeUs:-1 is invalid, changed to 0!
+06-02 04:10:59.704 16153 30361 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] MediaCodec discarded an unknown buffer
+06-02 04:10:59.704 16153 30361 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] MediaCodec discarded an unknown buffer
+06-02 04:10:59.704 16153 30361 D CCodecBufferChannel: [c2.android.vorbis.decoder#933] MediaCodec discarded an unknown buffer
+06-02 04:10:59.706 16153 30365 I hw-BpHwBinder: onLastStrongRef automatically unlinking death recipients
+06-02 04:10:59.743 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:10:59.945 16153 16153 D InputMethodManager: showSoftInput() view=com.termux.view.TerminalView{1f23846 VFED.V.L. .F...... 0,0-1064,1311 #7f080191 app:id/terminal_view aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+06-02 04:10:59.947 16153 16153 D InsetsController: show(ime(), fromIme=true)
+06-02 04:11:01.346 16153 17694 W RenderInspector: DequeueBuffer time out on com.termux/com.termux.app.TermuxActivity, count=1, avg=8 ms, max=8 ms.
+06-02 04:11:01.892 16153 16239 I OpenGLRenderer: Davey! duration=9223364663825ms; Flags=0, FrameTimelineVsyncId=400435, IntendedVsync=7373029229250, Vsync=7373029229250, InputEventId=0, HandleInputStart=7373031123384, AnimationStart=7373031128853, PerformTraversalsStart=7373031131040, DrawStart=7373031448853, FrameDeadline=7373044895916, FrameInterval=7373031074009, FrameStartTime=8333333, SyncQueued=7373032645415, SyncStart=7373032777186, IssueDrawCommandsStart=7373033264061, SwapBuffers=7373037806040, FrameCompleted=9223372036854775807, DequeueBufferDuration=108803, QueueBufferDuration=2102552, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7373040972863, DisplayPresentTime=0, 
+06-02 04:11:02.452 16153 16239 I OpenGLRenderer: Davey! duration=9223364663267ms; Flags=0, FrameTimelineVsyncId=400443, IntendedVsync=7373586613273, Vsync=7373586613273, InputEventId=58865442, HandleInputStart=7373587823852, AnimationStart=7373587828123, PerformTraversalsStart=7373587830207, DrawStart=7373588090311, FrameDeadline=7373610613272, FrameInterval=7373587787290, FrameStartTime=8333333, SyncQueued=7373589020571, SyncStart=7373589366613, IssueDrawCommandsStart=7373589758488, SwapBuffers=7373593986977, FrameCompleted=9223372036854775807, DequeueBufferDuration=69792, QueueBufferDuration=1241823, GpuCompleted=9223372036854775807, SwapBuffersCompleted=7373595888957, DisplayPresentTime=0, 
