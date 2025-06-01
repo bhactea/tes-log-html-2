@@ -6,6 +6,7 @@ android {
     namespace 'id.harpa.logger'
     namespace 'id.harpa.logger'
     namespace 'id.harpa.logger'
+    namespace 'id.harpa.logger'
     compileSdk 33
     defaultConfig {
         applicationId "id.harpa.logger"
@@ -22,5 +23,6 @@ android {
     }
 }
 dependencies {
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'de.robv.android.xposed:api:82'
 }
