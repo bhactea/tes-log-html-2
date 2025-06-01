@@ -12,7 +12,6 @@ android {
     namespace 'id.harpa.logger'
     compileSdk 33
     defaultConfig {
-        applicationId "id.harpa.logger"
         minSdk 23
         targetSdk 33
         versionCode 1
