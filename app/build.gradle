@@ -4,6 +4,7 @@ plugins {
 android {
     namespace 'id.harpa.logger'
     namespace 'id.harpa.logger'
+    namespace 'id.harpa.logger'
     compileSdk 33
     defaultConfig {
         applicationId "id.harpa.logger"
