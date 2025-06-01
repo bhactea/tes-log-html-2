@@ -1,2 +1,3 @@
 rootProject.name = "tes-log-html-2"
 include ":app"
+include ':dummy'
