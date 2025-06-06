@@ -51,7 +51,7 @@ jobs:
       run: apksigner verify dummy/build/outputs/apk/release/dummy-release-unsigned.apk
 
     - name: Upload final APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: HarpaLogger-Release-APK
         path: dummy/build/outputs/apk/release/dummy-release-unsigned.apk
