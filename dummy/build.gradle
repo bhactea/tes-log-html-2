@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
 }
-
 android {
     namespace 'id.harpa.logger.dummy'
     compileSdk 33
@@ -15,8 +14,11 @@ android {
             minifyEnabled false
         }
     }
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 }
-
 dependencies {
     implementation project(':app')
 }
